@@ -800,3 +800,5 @@ a.doc-card-preview:hover canvas{filter:brightness(.97)}
 p,li{text-wrap:pretty}
 h1,h2,h3{text-wrap:balance}
 @media(max-width:768px){.nav-hamburger{width:44px;height:44px;align-items:center;justify-content:center;padding:0;flex-shrink:0}}
+.pp-ecran--echelle{overflow:hidden}
+.pp-ecran--echelle>iframe{position:absolute;top:0;left:0;transform-origin:0 0;max-width:none;border:0}

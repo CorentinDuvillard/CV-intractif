@@ -265,6 +265,26 @@ function rendrePortfolio(p) {
   el('pfPhares').innerHTML = (p.wizefile ? blocWizefile(p.wizefile) : '') + (p.assistantIA ? blocAssistant(p.assistantIA) : '');
   el('pfAutres').innerHTML = liste(p.outils, carteOutil) + liste(p.dashboards, carteDashboard);
 
+  /* WizeFile s'affiche comme sur un écran d'ordinateur de 1280 px, réduit pour tenir dans la carte */
+  var cadreWf = el('wfVue');
+  if (cadreWf && cadreWf.tagName === 'IFRAME') {
+    var LARGEUR = 1100, zone = cadreWf.parentElement;
+    zone.classList.add('pp-ecran--echelle');
+    var ajuster = function () {
+      var w = zone.clientWidth, h = zone.clientHeight;
+      if (!w || !h) return;
+      /* Sur téléphone, la carte est trop étroite pour réduire : WizeFile garde sa version mobile */
+      var k = w < 500 ? 1 : Math.min(1, w / LARGEUR);
+      cadreWf.style.width = (w / k) + 'px';
+      cadreWf.style.height = (h / k) + 'px';
+      cadreWf.style.transform = 'scale(' + k + ')';
+    };
+    window.ajusterWizefile = ajuster;
+    if ('ResizeObserver' in window) new ResizeObserver(ajuster).observe(zone);
+    window.addEventListener('resize', ajuster);
+    ajuster();
+  }
+
   /* Pages de WizeFile */
   if (p.wizefile) {
     var url = p.wizefile.url.replace(/\/?$/, '/');
@@ -299,6 +319,7 @@ function rendrePortfolio(p) {
 
 /* Captures chargées seulement à l'ouverture de l'onglet Portfolio */
 function chargerPortfolio() {
+  if (window.ajusterWizefile) { window.ajusterWizefile(); setTimeout(window.ajusterWizefile, 50); }
   document.querySelectorAll('#page-portfolio img[data-capture]').forEach(function (img) { capture(img, img.dataset.capture); img.removeAttribute('data-capture'); });
 }
 
