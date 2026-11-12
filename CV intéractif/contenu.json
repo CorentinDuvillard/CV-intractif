@@ -1,0 +1,406 @@
+{
+  "identite": {
+    "nom": "Corentin Duvillard",
+    "photo": "fichiers/photo.jpg",
+    "photoGrande": "fichiers/photo-grande.jpg",
+    "accroche": "Étudiant en finance et courtier en financement, fiable, positif et adaptable. J'attache une importance particulière à la rigueur et à l'efficience de mes actions. Pour ça, je crée mes propres outils et j'automatise mon workflow, au travail comme au quotidien.",
+    "dateNaissance": "2003-08-22",
+    "ville": "Paris, France",
+    "telephone": "+33626972487",
+    "telephoneAffiche": "06 26 97 24 87",
+    "email": "duvillardpro@gmail.com",
+    "linkedin": "https://www.linkedin.com/in/corentin-duvillard"
+  },
+
+  "statut": {
+    "afficher": true,
+    "texte": "Courtier junior chez Émérite Financement"
+  },
+
+  "telechargement": {
+    "cvPdf": "fichiers/cv.pdf",
+    "nomFichier": "CV_Corentin_Duvillard.pdf"
+  },
+
+  "qrCode": {
+    "image": "fichiers/qr-code.png",
+    "texte": "Scanner pour accéder à mon profil LinkedIn"
+  },
+
+  "profil": {
+    "texte": "Je suis courtier junior en alternance chez Émérite Financement depuis octobre 2026, en parallèle du Programme Grande École de l'INSEEC, spécialité finance. Avant cela, j'ai passé près de trois ans chez Artémis Courtage, d'abord comme conseiller en financement et immobilier neuf, puis comme coordinateur financier d'une business unit. Je combine l'analyse financière et la relation client. J'ai aussi lancé WizeFile, un site d'outils de traitement de fichiers qui fonctionne entièrement sans envoi de données et hors ligne.",
+    "badges": [
+      { "icone": "couches", "texte": "Workspace tools creator" },
+      { "icone": "localisation", "texte": "Paris" },
+      { "icone": "calendrier", "texte": "{age} ans" },
+      { "icone": "voiture", "texte": "Permis B" }
+    ]
+  },
+
+  "experiences": [
+    {
+      "dates": "Oct. 2026 - aujourd'hui",
+      "duree": "Alternance",
+      "lieu": "Paris (75)",
+      "poste": "Courtier Junior",
+      "entreprise": "Émérite Financement",
+      "actuel": true,
+      "missions": [
+        "Analyse des données financières des emprunteurs et constitution des dossiers de financement immobilier",
+        "Évaluation et recommandation de solutions bancaires et assurantielles",
+        "Coordination avec les partenaires financiers pour optimiser les conditions et assurer la conformité",
+        "Recherche et présélection de programmes à avantages fiscaux (MH, Malraux, Pinel, LMNP, Déficit foncier)",
+        "Représentation commerciale"
+      ],
+      "description": {
+        "resume": "En tant que courtier junior, j'interviens en support direct de deux *top performers*. Mon quotidien s'articule autour de **dossiers de financement complexes et à forte volumétrie**.",
+        "details": [
+          "Le montage de dossiers, la prospection, la représentation, les rendez-vous clients, l'analyse financière et la négociation bancaire constituent la **force opérationnelle active** que je déploie. La veille de marché, la conformité et le développement commercial en constituent le **socle stratégique**."
+        ]
+      }
+    },
+    {
+      "dates": "Sept. 2025 - Sept. 2026",
+      "duree": "12 mois",
+      "lieu": "Paris (75)",
+      "poste": "Coordinateur Financier",
+      "entreprise": "Artémis Courtage",
+      "missions": [
+        "Analyse de performances financières et modélisation des résultats en appui aux décisions stratégiques",
+        "Production et fiabilisation des reportings destinés à la direction (KPI, marges, cash, projections)",
+        "Consolidation d'informations stratégiques issues des équipes commerciales et opérationnelles",
+        "Amélioration des processus de suivi financier et automatisation des outils",
+        "Vérification de la cohérence financière des informations transmises",
+        "Représentation commerciale"
+      ],
+      "description": {
+        "resume": "En tant que coordinateur financier, j'étais en charge de la gestion financière d'une Business Unit générant **plusieurs millions d'euros** de chiffre d'affaires par an.",
+        "details": [
+          "Je collaborais étroitement avec la coordinatrice commerciale de la BU Immobilier Neuf sur des sujets clés tels que la facturation, le suivi de la performance, le pilotage des équipes, la production de rapports financiers et l'élaboration d'outils d'aide à la décision.",
+          "Au quotidien, j'apportais un appui opérationnel et analytique aux équipes commerciales afin d'évaluer leurs performances, d'identifier les leviers d'amélioration et de concevoir des outils de pilotage adaptés. Dans une Business Unit réalisant **plusieurs centaines de ventes par an**, la mise en œuvre d'une politique commerciale structurée, combinée à un accompagnement décisionnel rigoureux, a permis d'accroître significativement la productivité. Cette dynamique s'est traduite par **une progression globale des indicateurs** de performance comprise entre **+20 et +40 points**."
+        ]
+      }
+    },
+    {
+      "dates": "Nov. 2023 - Août 2025",
+      "duree": "21 mois",
+      "lieu": "Paris (75)",
+      "poste": "Conseiller Financier & Immobilier Neuf",
+      "entreprise": "Artémis Courtage",
+      "missions": [
+        "Analyse des données financières des emprunteurs et constitution des dossiers de financement immobilier",
+        "Évaluation et recommandation de solutions bancaires et assurantielles",
+        "Coordination avec les partenaires financiers pour optimiser les conditions et assurer la conformité",
+        "Recherche et présélection de programmes à avantages fiscaux (MH, Malraux, Pinel, LMNP, Déficit foncier)",
+        "Représentation commerciale"
+      ],
+      "description": {
+        "resume": "En tant que conseiller financier et immobilier neuf, j'intervenais en support direct de deux top performers : le directeur de l'offre, sur les **dossiers de financement les plus complexes**, et la directrice Immobilier neuf, sur **un portefeuille à forte volumétrie**.",
+        "details": [
+          "En courtage en crédit, j'accompagnais l'un des principaux producteurs d'Artémis Courtage avec une mission simple : faire avancer, sécuriser et conclure les deals vite et bien. Gestion d'un pipe d'environ **15 dossiers actifs** en permanence, **45 dossiers par an**, finalisation **en moins de 5 semaines** une fois le dossier complet, et **10 000 € d'honoraires en moyenne par deal** : l'objectif était d'allier vitesse d'exécution, qualité de montage et performance commerciale.",
+          "En immobilier neuf, dans un marché où la réactivité fait la différence, il fallait traiter les leads immédiatement, convertir le contact en rendez-vous, puis transformer le besoin en opportunité concrète. Les prospects étaient **pris en charge en moins de 48 heures**, avec une proposition initiale large pour accélérer la dynamique commerciale, avant un affinage progressif via une stratégie d'entonnoir. Résultat : **près de 50 ventes**, **12 000 € d'honoraires moyens par opération**, et des **deals conclus en 2 à 3 semaines**."
+        ]
+      }
+    }
+  ],
+
+  "jobsEtudiants": [
+    {
+      "poste": "Boucher-Volailler",
+      "entreprise": "Bourgeois et Fils",
+      "infos": "Févr. 2019 - Déc. 2022 · 46 mois · Paris (75)",
+      "competences": ["Relation client", "Hygiène alimentaire", "Gestion des stocks"]
+    },
+    {
+      "poste": "Assistant Barman / Runner",
+      "entreprise": "Brasserie Le Gorille",
+      "infos": "Étés 2019 & 2020 · 2 × 3 mois · Lagny-sur-Marne (77)",
+      "competences": ["Coordination d'équipe", "Service", "Gestion du stress"]
+    }
+  ],
+
+  "formations": [
+    {
+      "annees": "2026-2028",
+      "diplome": "Programme Grande École, spécialisation Finance",
+      "ecole": "INSEEC · Paris",
+      "matieres": ["Fusions & acquisitions", "Gestion d'actifs", "Marchés de capitaux", "Risque d'entreprise", "Droit des affaires", "Bloomberg avancé", "VBA", "StartUps & financement", "Gestion de crise"]
+    },
+    {
+      "annees": "2025-2026",
+      "diplome": "Bachelor Finance",
+      "ecole": "Financia Business School · Paris",
+      "matieres": ["Analyse financière", "Comptabilité", "Mathématiques financières", "Management", "Fiscalité", "Yield management"]
+    },
+    {
+      "annees": "2023-2025",
+      "diplome": "BTS Banque, conseiller de clientèle",
+      "ecole": "ESG Finance · Paris",
+      "matieres": ["Techniques bancaires", "Gestion de clientèle", "Analyse de portefeuille"]
+    },
+    {
+      "annees": "2021-2023",
+      "diplome": "Licence Économie & Gestion",
+      "precision": "(2 années)",
+      "ecole": "Université Panthéon-Assas Paris II",
+      "matieres": ["Comptabilité générale", "Macroéconomie", "Microéconomie", "Statistique", "Droit", "Mathématiques"]
+    },
+    {
+      "annees": "2018-2021",
+      "diplome": "Bac professionnel, Commercialisation & Services en restauration",
+      "ecole": "Lycée Émilie du Châtelet · Serris (77)",
+      "mention": "Reçu avec mention"
+    }
+  ],
+
+  "competences": {
+    "barres": [
+      {
+        "titre": "Finance & Analyse",
+        "icone": "graphique",
+        "items": [
+          { "nom": "Analyse financière & modélisation", "niveau": 90 },
+          { "nom": "Reporting & KPI", "niveau": 85 },
+          { "nom": "Défiscalisation & investissement", "niveau": 80 },
+          { "nom": "Conformité bancaire", "niveau": 75 }
+        ]
+      },
+      {
+        "titre": "Langues",
+        "icone": "globe",
+        "items": [
+          { "nom": "Français", "libelle": "C2, langue maternelle", "niveau": 100 },
+          { "nom": "Anglais", "libelle": "B2", "niveau": 65 }
+        ]
+      }
+    ],
+    "etiquettes": [
+      {
+        "titre": "Outils & Digital",
+        "icone": "ecran",
+        "items": ["Pack Office", "Pack Google", "Claude Code", "Obsidian", "IA spécialisée", "Automatisation"]
+      },
+      {
+        "titre": "Soft Skills",
+        "icone": "equipe",
+        "items": ["Communication", "Prise de parole", "Adaptabilité", "Rigueur", "Esprit d'analyse"]
+      }
+    ]
+  },
+
+  "distinctions": [
+    { "type": "medaille", "titre": "Médaille d'Argent", "texte": "Meilleur Apprenti de France\nArt du Service en Salle, 2020" },
+    { "type": "certification", "titre": "Certification AMF", "texte": "Autorité des Marchés Financiers", "statut": "En cours" },
+    { "type": "certification", "titre": "Claude Academy", "texte": "Certification Anthropic", "statut": "En cours" }
+  ],
+
+  "interets": [
+    { "emoji": "📚", "titre": "Littérature", "texte": "Philosophie, nature humaine, fantasy" },
+    { "emoji": "🌿", "titre": "Botanique", "texte": "Bonsaï, jardin d'intérieur" },
+    { "emoji": "🏀", "titre": "Basketball", "texte": "Pratique amateur" },
+    { "emoji": "🛠️", "titre": "Automatisation & outils", "texte": "[wizefile.com](https://wizefile.com), un assistant IA, des dashboards" }
+  ],
+
+  "recommandations": [
+    {
+      "nom": "Adrien Devic",
+      "role": "Directeur de l'Offre, Artémis Courtage",
+      "date": "17 mars 2025",
+      "fichier": "fichiers/recommandations/adrien-devic.pdf"
+    },
+    {
+      "nom": "Franchesca Baral",
+      "role": "Directrice Commerciale Immobilier, Artémis Courtage",
+      "date": "2025",
+      "fichier": "fichiers/recommandations/franchesca-baral.pdf"
+    }
+  ],
+
+  "biographie": [
+    {
+      "titre": "Qui suis-je",
+      "paragraphes": [
+        "Je suis né le 22 août 2003 à Lagny-sur-Marne, en Seine-et-Marne.",
+        "J'ai grandi dans un cadre assez classique. Très tôt je me suis intéressé aux jeux de gestion et de stratégie, que j'ai découverts grâce à mes frères. Des jeux comme Rise of Nations m'ont marqué, parce qu'ils demandaient à la fois de réfléchir, d'anticiper et de faire preuve de créativité.",
+        "> Avec le temps, cet intérêt s'est transformé en un goût plus large pour l'analyse, identifier les enjeux et proposer des solutions à la fois efficientes et concrètes."
+      ]
+    },
+    {
+      "titre": "Mon parcours",
+      "paragraphes": [
+        "J'ai commencé ma scolarité à l'école élémentaire Gambetta, près de chez moi. C'est là que j'ai construit mes premiers repères, aussi bien scolaires que sociaux. J'ai ensuite intégré le collège Saint-Laurent La Paix Notre-Dame à Lagny, un établissement privé catholique, où j'ai consolidé mes connaissances de base.",
+        "Après l'obtention de mon brevet, j'avais la possibilité de suivre une voie générale. Pourtant, je ne me retrouvais pas dans un enseignement que je percevais comme trop large et pas assez concret. J'ai donc choisi d'intégrer le lycée Émilie du Châtelet à Serris. Cette expérience m'a appris la rigueur, la discipline et l'exigence propres aux métiers de bouche.",
+        "> C'est en classe de première que j'ai rencontré une professeure d'économie qui a profondément marqué mon parcours.",
+        "Par sa passion, son implication et sa manière de transmettre, elle a éveillé chez moi un véritable intérêt pour l'économie. C'est grâce à ses enseignements que j'ai décidé de poursuivre mes études en faculté d'économie-gestion.",
+        "J'ai alors intégré l'université Paris-Panthéon-Assas. Au fil des cours, j'ai confirmé mon intérêt pour la finance. Après deux années passées à l'université, j'ai toutefois compris que ce cadre, trop généraliste à mes yeux et pas assez professionnalisant, ne correspondait plus à mes attentes. J'ai donc fait le choix de m'orienter vers une formation plus concrète, dans un secteur qui m'attirait particulièrement à ce moment-là : la banque et la monnaie.",
+        "C'est ainsi que j'ai intégré le BTS Banque de l'ESG Finance, en alternance chez Artémis Courtage. Pendant deux ans, j'y ai développé mon esprit d'analyse ainsi que mon discours commercial autour de sujets variés comme le prêt immobilier, la défiscalisation ou encore la gestion de patrimoine.",
+        "J'ai ensuite choisi de poursuivre l'aventure chez Artémis, au sein de la business unit dédiée à l'immobilier neuf, dont j'ai piloté les finances. Au cours de ces expériences, j'ai eu l'occasion d'échanger avec plusieurs consultants issus de différents horizons. Ces rencontres ont progressivement fait naître en moi l'envie de rejoindre à mon tour cet univers.",
+        "> Cela a fait écho à ce qui m'anime depuis longtemps : la stratégie, la gestion et la prise de décision globale, avec un impact concret.",
+        "Dans cette continuité, j'ai intégré en septembre 2026 le Programme Grande École de l'INSEEC, avec une spécialisation en finance. En octobre, j'ai rejoint Émérite Financement comme courtier junior en alternance."
+      ]
+    },
+    {
+      "titre": "Mes ambitions",
+      "paragraphes": [
+        "> Je veux construire une trajectoire exigeante dans le conseil en stratégie, au croisement de l'analyse, de la décision et de l'impact.",
+        "Ce qui m'attire dans ce métier, c'est la capacité à comprendre rapidement une situation complexe, à en extraire les enjeux décisifs et à formuler des recommandations claires, solides et assumées.",
+        "J'ai une appétence particulière pour les sujets de corporate finance, de croissance externe, de positionnement concurrentiel et de souveraineté économique, parce qu'ils obligent à penser à la fois la performance, la résilience et la vision de long terme.",
+        "Mon ambition est d'évoluer dans un environnement international, sur des missions à forte intensité intellectuelle, puis de capitaliser sur cette expérience pour accéder à des fonctions de direction dans le conseil ou, à terme, participer à la création d'un cabinet."
+      ]
+    }
+  ],
+
+  "portfolio": {
+
+    "wizefile": {
+      "titre": "WizeFile",
+      "badge": "Projet personnel",
+      "description": "Des outils PDF et image qui traitent tout dans le navigateur, sans envoi de fichiers. Conçu et développé seul, en ligne depuis septembre 2026.",
+      "chiffres": ["58 outils", "100 % local", "Français et anglais"],
+      "outils": ["Site web", "JavaScript"],
+      "apercuEnDirect": true,
+      "url": "https://wizefile.com",
+      "pages": [
+        { "nom": "Accueil", "chemin": "" },
+        { "nom": "Compresser PDF", "chemin": "compresser-pdf/" },
+        { "nom": "Fusionner PDF", "chemin": "fusionner-pdf/" },
+        { "nom": "Convertir image", "chemin": "convertir-image/" },
+        { "nom": "Images → PDF", "chemin": "images-en-pdf/" },
+        { "nom": "Créer un ZIP", "chemin": "creer-zip/" },
+        { "nom": "PDF → Images", "chemin": "pdf-en-images/" }
+      ]
+    },
+
+    "assistantIA": {
+      "titre": "Assistant IA",
+      "badge": "Outil mis à disposition",
+      "description": "Un assistant personnel prêt à installer, conçu pour mon usage. Il suit projets et tâches, et est paramétré pour challenger l'utilisateur. Mis à disposition, utilisable simplement par tous.",
+      "chiffres": ["Installation guidée", "Windows", "Claude Pro ou Max"],
+      "outils": ["Claude Code", "Obsidian", "PowerShell"],
+      "tutoriel": "fichiers/assistant-ia/tutoriel.html",
+      "tutorielApercu": "fichiers/assistant-ia/tutoriel-apercu.jpg",
+      "capture": "fichiers/assistant-ia/prime.png",
+      "pack": "fichiers/assistant-ia/assistant-ia-pack-octobre-2026.zip",
+      "packVersion": "octobre 2026",
+      "packTaille": "940 Ko"
+    },
+
+    "outils": [
+      {
+        "titre": "Strategic Analysis Generator",
+        "description": "Outil de génération d'analyses stratégiques structurées : matrices, benchmarks et recommandations.",
+        "outils": ["HTML", "JavaScript", "Chart.js"],
+        "demo": "fichiers/portfolio/Demo_Strategic_Analysis_Generator.html",
+        "template": "fichiers/portfolio/Template_Strategic_Analysis_Generator.html"
+      },
+      {
+        "titre": "Sales Flow Reporting Generator",
+        "description": "Générateur de reporting commercial annuel : tableaux de bord dynamiques, graphiques et analyses de flux.",
+        "outils": ["HTML", "JavaScript", "Chart.js"],
+        "demo": "fichiers/portfolio/Demo_Sales_Flow_Reporting_Generator.html",
+        "template": "fichiers/portfolio/Template_Sales_Flow_Reporting_Generator.html"
+      }
+    ],
+
+    "dashboards": [
+      {
+        "titre": "Dashboard de suivi de performances",
+        "description": "Suivi annuel des objectifs commerciaux : KPIs, répartition par référent et par région, performances mensuelles.",
+        "outils": ["Excel"],
+        "demo": "fichiers/portfolio/Demo_Dashboard_suivi_performances.xlsx",
+        "template": "fichiers/portfolio/Template_Dashboard_suivi_performances.xlsx",
+        "apercu": {
+          "titre": "Synthèse objectifs 2026",
+          "sousTitre": "Dernière actualisation : 23/03/2026",
+          "kpis": [
+            { "valeur": "496 000 €", "label": "Objectif CA" },
+            { "valeur": "202 600 €", "label": "CA réalisé", "accent": true },
+            { "valeur": "51", "label": "Obj. contrats" },
+            { "valeur": "18", "label": "Contrats signés", "accent": true },
+            { "valeur": "40,8 %", "label": "Réalisation" },
+            { "valeur": "11 256 €", "label": "Commission moy." }
+          ],
+          "tableau": {
+            "titre": "Performances par référent",
+            "colonnes": ["Référent", "CA", "Dossiers", "Comm. moy.", "% Réal. CA"],
+            "lignes": [
+              ["Girard Léa", "24 500 €", "2", "12 250 €", "111,4 %"],
+              ["Moreau Lucas", "25 300 €", "2", "12 650 €", "93,7 %"],
+              ["Lefèvre Inès", "20 100 €", "2", "10 050 €", "143,6 %"],
+              ["Faure Nathan", "22 400 €", "2", "11 200 €", "29,1 %"],
+              ["Roux Emma", "20 700 €", "2", "10 350 €", "57,5 %"],
+              ["Rolland Sarah", "14 200 €", "1", "14 200 €", "40,6 %"]
+            ]
+          },
+          "barres": {
+            "titre": "Répartition par région",
+            "items": [
+              { "label": "Île-de-France", "pourcentage": 55.4, "valeur": "275 000 € (55 %)" },
+              { "label": "Centre-Loire", "pourcentage": 12.7, "valeur": "63 000 € (13 %)" },
+              { "label": "Sud-Ouest", "pourcentage": 10.1, "valeur": "50 000 € (10 %)" },
+              { "label": "Bretagne", "pourcentage": 9.9, "valeur": "49 000 € (10 %)" },
+              { "label": "Sud-Est", "pourcentage": 6.5, "valeur": "32 000 € (6 %)" },
+              { "label": "Hauts-de-France", "pourcentage": 5.4, "valeur": "27 000 € (5 %)" }
+            ]
+          }
+        }
+      },
+      {
+        "titre": "Dashboard de suivi de facturation",
+        "description": "Suivi du pipeline de facturation : statuts des dossiers, taux actable, ventilation mensuelle et par statut.",
+        "outils": ["Excel"],
+        "demo": "fichiers/portfolio/Demo_Dashboard_suivi_facturation.xlsx",
+        "template": "fichiers/portfolio/Template_Dashboard_suivi_facturation.xlsx",
+        "apercu": {
+          "titre": "Synthèse facturation 2026",
+          "sousTitre": "Dernière actualisation : 30/03/2026",
+          "kpis": [
+            { "valeur": "32 400 €", "label": "CA total" },
+            { "valeur": "14 920 €", "label": "CA actable", "accent": true },
+            { "valeur": "7 870 €", "label": "CA facturé" },
+            { "valeur": "24", "label": "Dossiers" },
+            { "valeur": "45,8 %", "label": "Taux actable", "accent": true },
+            { "valeur": "6", "label": "Facturés" }
+          ],
+          "barres": {
+            "titre": "Pipeline par statut",
+            "items": [
+              { "label": "Finalisé", "pourcentage": 24.3, "valeur": "7 870 € (6)" },
+              { "label": "Att. accord", "pourcentage": 21.5, "valeur": "6 980 € (4)" },
+              { "label": "Sans suite", "pourcentage": 14.4, "valeur": "4 660 € (4)" },
+              { "label": "Sign. notaire", "pourcentage": 12, "valeur": "3 880 € (3)" },
+              { "label": "Att. RDV", "pourcentage": 9.4, "valeur": "3 040 € (2)" },
+              { "label": "Att. offre", "pourcentage": 7.1, "valeur": "2 300 € (2)" }
+            ]
+          }
+        }
+      },
+      {
+        "titre": "Dashboard de reporting commercial",
+        "description": "Reporting hebdomadaire d'activité commerciale : saisie terrain, suivi contacts, tableau de bord automatisé.",
+        "outils": ["Excel"],
+        "demo": "fichiers/portfolio/Demo_Dashboard_reporting_commercial.xlsx",
+        "template": "fichiers/portfolio/Template_Dashboard_reporting_commercial.xlsx",
+        "apercu": {
+          "titre": "Tableau de bord, Martin DUPONT",
+          "sousTitre": "Reporting hebdomadaire 2026",
+          "kpis": [
+            { "valeur": "16", "label": "Contacts totaux" },
+            { "valeur": "1", "label": "Vente signée", "accent": true },
+            { "valeur": "3", "label": "Semaines actives" },
+            { "valeur": "3", "label": "Agences couvertes" }
+          ],
+          "tableau": {
+            "titre": "Activité récente",
+            "colonnes": ["Semaine", "Agence", "Action", "Contacts", "Ventes"],
+            "lignes": [
+              ["05/01/2026", "Lyon", "Prise de RDV", "7", "0"],
+              ["12/01/2026", "Marseille", "Négociation", "4", "1"],
+              ["19/01/2026", "Paris", "Présentation", "5", "0"]
+            ]
+          }
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,1588 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#faf7f2;--surface:#fff;--surface2:#f5efe6;
+  --border:#ddd4c8;--border-light:#e8e0d4;
+  --text:#4b4036;--text2:#7a6e60;--text3:#a0947f;--text-inv:#fffcf7;
+  --camel:#c4a87d;--camel-deeper:#8b7350;--camel-light:#f1e9df;
+  --green:#5a8a5c;--green-bg:#e8f0e4;--green-text:#3d6b3f;
+  --red:#b04a4a;--red-bg:#f5e4e4;--red-text:#8c3030;
+  --orange:#b88430;--orange-bg:#f5edd8;--orange-text:#8a6318;
+  --radius:12px;--radius-lg:16px;
+  --shadow:0 1px 3px rgba(75,64,54,.06),0 6px 20px rgba(75,64,54,.04);
+  --shadow-lg:0 4px 12px rgba(75,64,54,.08),0 12px 36px rgba(75,64,54,.05);
+  --shadow-hover:0 6px 20px rgba(75,64,54,.10),0 16px 44px rgba(75,64,54,.06);
+  --font-display:'Playfair Display',Georgia,serif;
+  --font-body:'Source Sans 3','Source Sans Pro',system-ui,sans-serif;
+  --transition:all .25s cubic-bezier(.4,0,.2,1);--max-w:1440px;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-body);background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh;font-size:15px;-webkit-font-smoothing:antialiased}
+
+/* Nav */
+.nav{background:var(--surface);padding:0 40px;display:flex;align-items:center;height:60px;gap:12px;position:sticky;top:0;z-index:100;box-shadow:0 1px 8px rgba(75,64,54,.08);border-bottom:1px solid var(--border-light)}
+.nav-brand{font-family:var(--font-display);font-size:18px;color:var(--camel-deeper);font-weight:600;letter-spacing:.5px;margin-right:24px;white-space:nowrap;user-select:none}
+.nav-tabs{display:flex;gap:2px;height:100%;overflow-x:auto;scrollbar-width:none}.nav-tabs::-webkit-scrollbar{display:none}
+.nav-tab{color:var(--text3);font-size:13px;font-weight:500;padding:0 18px;cursor:pointer;border:none;background:none;height:100%;display:flex;align-items:center;gap:7px;border-bottom:2.5px solid transparent;transition:var(--transition);white-space:nowrap;letter-spacing:.2px}
+.nav-tab:hover{color:var(--text);background:var(--surface2)}
+.nav-tab.active{color:var(--text);border-bottom-color:var(--camel);background:var(--surface2);font-weight:600}
+.nav-tab svg{width:15px;height:15px;opacity:.6}.nav-tab.active svg{opacity:1;color:var(--camel)}
+.nav-client{margin-left:auto;color:var(--camel-deeper);font-size:12px;font-weight:500;background:var(--camel-light);padding:7px 16px;border-radius:24px;letter-spacing:.3px;white-space:nowrap;border:1px solid var(--border-light)}
+.nav-tabs.hidden{display:none}.nav-client.hidden{display:none}
+
+/* Layout */
+.main{max-width:var(--max-w);margin:0 auto;padding:36px 44px 80px}
+.view{display:none;animation:fadeUp .4s ease}.view.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+/* Upload */
+.upload-zone{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:72vh;gap:28px}
+.upload-box{border:2px dashed var(--border);border-radius:var(--radius-lg);padding:72px 100px;text-align:center;cursor:pointer;transition:var(--transition);background:var(--surface);box-shadow:var(--shadow)}
+.upload-box:hover{border-color:var(--camel);background:var(--surface2);box-shadow:var(--shadow-hover)}
+.upload-box h2{font-family:var(--font-display);font-size:26px;margin-bottom:10px;color:var(--text)}
+.upload-box p{color:var(--text2);font-size:14px}.upload-box input{display:none}
+.template-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;border-radius:var(--radius);background:var(--surface);color:var(--text2);font-size:13px;font-weight:500;border:1px solid var(--border);cursor:pointer;transition:var(--transition);font-family:var(--font-body)}
+.template-btn:hover{border-color:var(--camel);color:var(--camel-deeper);background:var(--surface2)}.template-btn svg{width:16px;height:16px}
+
+/* Grid & Cards */
+.grid{display:grid;gap:24px}.g2{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}.g3{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}.g4{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.card{background:var(--surface);border-radius:var(--radius);padding:24px 28px;box-shadow:var(--shadow);border:1px solid var(--border-light);transition:var(--transition);position:relative}
+.card:hover{box-shadow:var(--shadow-hover);transform:translateY(-1px)}
+.card-title{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:8px;font-weight:600;display:flex;align-items:center;gap:6px}
+.card-value{font-size:30px;font-weight:700;font-family:var(--font-display);letter-spacing:-.5px;color:var(--text);line-height:1.2}
+.card-sub{font-size:12px;color:var(--text2);margin-top:6px;font-weight:500}
+.card-badge{display:inline-block;font-size:10px;font-weight:700;padding:3px 12px;border-radius:20px;margin-top:8px;letter-spacing:.3px;text-transform:uppercase}
+.badge-green{background:var(--green-bg);color:var(--green-text)}.badge-red{background:var(--red-bg);color:var(--red-text)}.badge-orange{background:var(--orange-bg);color:var(--orange-text)}
+
+/* Tooltips */
+.tooltip-icon{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:var(--surface2);color:var(--text3);font-size:10px;font-weight:700;cursor:help;transition:var(--transition);flex-shrink:0}
+.tooltip-icon:hover{background:var(--camel);color:var(--text-inv)}
+.tooltip-wrap{position:relative;display:inline-flex}
+.tooltip-content{display:none;position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%);width:280px;padding:14px 16px;background:var(--text);color:var(--text-inv);border-radius:var(--radius);font-size:12px;line-height:1.5;box-shadow:0 8px 24px rgba(0,0,0,.2);z-index:200;pointer-events:none}
+.tooltip-content::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:var(--text)}
+.tooltip-wrap:hover .tooltip-content{display:block}
+.tooltip-content strong{color:var(--camel);display:block;margin-bottom:4px;font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+
+/* Tables */
+.table-wrap{overflow-x:auto;margin-top:16px;border-radius:var(--radius);border:1px solid var(--border-light);box-shadow:var(--shadow)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:var(--text);color:var(--camel);padding:13px 18px;text-align:center;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.8px}
+td{padding:12px 18px;border-bottom:1px solid var(--border-light);text-align:center}
+td:first-child{text-align:left}td:not(:first-child){font-variant-numeric:tabular-nums}
+tr:hover td{background:var(--surface2)}
+.row-calc{background:var(--surface2);font-weight:700}.row-calc td{border-bottom-color:var(--border)}
+.row-section td{background:var(--camel-light);font-weight:700;color:var(--camel-deeper);font-size:11px;text-transform:uppercase;letter-spacing:.8px;border-bottom:2px solid var(--camel)}
+.val-pos{color:var(--green-text)}.val-neg{color:var(--red-text)}
+
+/* Sections */
+.section{margin-bottom:36px}
+.section-title{font-family:var(--font-display);font-size:22px;font-weight:600;margin-bottom:20px;padding-bottom:10px;border-bottom:2px solid var(--camel);color:var(--text);display:flex;align-items:center;gap:10px}
+.section-title svg{width:20px;height:20px;color:var(--camel)}
+.section-sub{font-size:14px;color:var(--text2);margin-bottom:20px}
+.info-grid{display:grid;grid-template-columns:200px 1fr;gap:1px;background:var(--border-light);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+.info-grid dt{background:var(--surface2);padding:12px 20px;font-size:12px;font-weight:600;color:var(--text2)}
+.info-grid dd{background:var(--surface);padding:12px 20px;font-size:13px;color:var(--text)}
+
+/* SWOT */
+.swot{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.swot-box{border-radius:var(--radius);padding:24px 28px;min-height:120px;border:1px solid transparent;transition:var(--transition)}
+.swot-box:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg)}
+.swot-box h4{font-size:11px;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;font-weight:700;display:flex;align-items:center;gap:6px}
+.swot-box p{font-size:13px;line-height:1.6}
+.swot-s{background:#e8f0e4;color:#3d5c3f;border-color:#c8dcc4}
+.swot-w{background:#f5e4e4;color:#7a3030;border-color:#e4c8c8}
+.swot-o{background:#e4ecf0;color:#2e5468;border-color:#c4d8e4}
+.swot-t{background:#f5edd8;color:#7a5c18;border-color:#e4d8b8}
+
+/* Charts */
+.chart-container{background:var(--surface);border-radius:var(--radius);padding:28px;box-shadow:var(--shadow);border:1px solid var(--border-light)}
+.chart-container h3{font-family:var(--font-display);font-size:15px;margin-bottom:16px;color:var(--text);font-weight:600}
+canvas{max-height:320px}
+
+/* Sub-nav (shared) */
+.sub-nav{display:flex;gap:4px;margin-bottom:28px;background:var(--surface2);border-radius:var(--radius);padding:4px;width:fit-content;flex-wrap:wrap}
+.sub-nav-btn{padding:9px 20px;border:none;background:none;cursor:pointer;font-size:13px;font-weight:500;color:var(--text2);border-radius:8px;transition:var(--transition);font-family:var(--font-body)}
+.sub-nav-btn:hover{color:var(--text);background:rgba(255,255,255,.5)}
+.sub-nav-btn.active{background:var(--surface);color:var(--text);box-shadow:var(--shadow);font-weight:600}
+.rh-sub-view{display:none}.rh-sub-view.active{display:block;animation:fadeUp .3s ease}
+
+/* Employees */
+.employee-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:24px}
+.employee-count{font-family:var(--font-display);font-size:28px;font-weight:700;color:var(--text)}
+.employee-count span{font-size:14px;font-weight:400;color:var(--text2);font-family:var(--font-body);margin-left:8px}
+.employee-search{padding:10px 18px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;width:260px;background:var(--surface);color:var(--text);font-family:var(--font-body);transition:var(--transition)}
+.employee-search:focus{outline:none;border-color:var(--camel);box-shadow:0 0 0 3px rgba(196,168,125,.15)}
+.employee-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px}
+.emp-card{background:var(--surface);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow);border:1px solid var(--border-light);transition:var(--transition);display:flex;gap:16px;align-items:flex-start}
+.emp-card:hover{box-shadow:var(--shadow-hover);transform:translateY(-1px)}
+.emp-avatar{width:52px;height:52px;border-radius:50%;background:var(--camel-light);color:var(--camel-deeper);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;font-weight:700;flex-shrink:0;border:2px solid var(--border-light)}
+.emp-info{flex:1;min-width:0}.emp-name{font-weight:700;font-size:15px;color:var(--text);margin-bottom:2px}
+.emp-role{font-size:12px;color:var(--text2);margin-bottom:10px}
+.emp-detail{font-size:12px;color:var(--text2);line-height:1.7}.emp-detail strong{color:var(--text);font-weight:600}
+
+/* Audit sectoriel */
+.strat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
+.strat-card{background:var(--surface);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow);border:1px solid var(--border-light);border-top:3px solid var(--camel)}
+.strat-card h4{font-family:var(--font-display);font-size:14px;margin-bottom:10px;color:var(--text)}
+.strat-card p{font-size:13px;color:var(--text2);line-height:1.6}
+#mapContainer{width:100%;height:380px;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);border:1px solid var(--border-light);z-index:1}
+.map-wrap{margin-bottom:20px}
+.map-error{text-align:center;padding:60px 20px;color:var(--text3);font-size:13px;background:var(--surface);border-radius:var(--radius);border:1px solid var(--border-light)}
+.map-legend{display:flex;gap:20px;margin-top:16px}.map-legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text2)}.map-legend-dot{width:10px;height:10px;border-radius:50%}
+
+/* Audit interne */
+.audit-block{background:var(--surface);border-radius:var(--radius);padding:28px;box-shadow:var(--shadow);border:1px solid var(--border-light);margin-bottom:20px}
+.audit-block h4{font-family:var(--font-display);font-size:15px;margin-bottom:12px;color:var(--text);display:flex;align-items:center;gap:8px}
+.audit-block p,.audit-block ul{font-size:13px;color:var(--text2);line-height:1.7}
+.audit-highlight{border-left:4px solid var(--camel);padding-left:24px}
+
+/* Rapport */
+.rapport-header{background:var(--text);color:var(--text-inv);border-radius:var(--radius-lg);padding:44px 48px;margin-bottom:28px;position:relative;overflow:hidden}
+.rapport-header::after{content:'';position:absolute;top:0;right:0;width:300px;height:100%;background:linear-gradient(135deg,transparent,rgba(196,168,125,.1))}
+.rapport-header h2{font-family:var(--font-display);font-size:26px;font-weight:600;margin-bottom:6px;position:relative}
+.rapport-header p{color:var(--camel);font-size:13px;position:relative}
+.rapport-exec{background:var(--surface);border-radius:var(--radius);padding:28px;box-shadow:var(--shadow);border-left:4px solid var(--camel);margin-bottom:20px}
+.rpt-section{margin-bottom:20px;page-break-inside:avoid}
+.rpt-section-title{font-family:var(--font-display);font-size:15px;font-weight:600;color:var(--text);margin-bottom:10px;padding-bottom:5px;border-bottom:1.5px solid var(--camel)}
+.rpt-kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:14px}
+.rpt-kpi{background:var(--surface2);border-radius:8px;padding:12px 14px;text-align:center}
+.rpt-kpi .rpt-kpi-label{font-size:9px;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);margin-bottom:3px;font-weight:600}
+.rpt-kpi .rpt-kpi-value{font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--text)}
+.rpt-text{font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:6px}.rpt-text strong{color:var(--text)}
+.rpt-two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.rpt-box{background:var(--surface);border-radius:8px;padding:14px 16px;border:1px solid var(--border-light)}
+.rpt-box h5{font-family:var(--font-display);font-size:11px;font-weight:600;color:var(--text);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
+.rpt-box p{font-size:11px;color:var(--text2);line-height:1.5}
+.dl-btn{display:inline-flex;align-items:center;gap:10px;padding:14px 36px;border-radius:var(--radius);background:var(--text);color:var(--text-inv);font-size:14px;font-weight:600;border:none;cursor:pointer;font-family:var(--font-body);letter-spacing:.3px;transition:var(--transition)}
+.dl-btn:hover{background:var(--camel-deeper)}.dl-btn:disabled{opacity:.5;cursor:wait}.dl-btn svg{width:18px;height:18px}
+
+/* Synth box */
+.synth-box{background:var(--surface);border-radius:var(--radius);padding:24px 28px;box-shadow:var(--shadow);border:1px solid var(--border-light);border-left:4px solid var(--camel);margin-bottom:28px}
+.synth-box h3{font-family:var(--font-display);font-size:17px;margin-bottom:16px;color:var(--text)}
+.synth-item{margin-bottom:10px;font-size:13px;color:var(--text2);line-height:1.6}.synth-item strong{color:var(--text);font-weight:600}
+
+/* Footer */
+.site-footer{text-align:center;padding:28px 20px;font-size:11px;color:var(--text3);border-top:1px solid var(--border-light);margin-top:60px;letter-spacing:.2px}
+
+/* Responsive */
+@media(max-width:1024px){.main{padding:24px 28px 60px}.g4{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}}
+@media(max-width:768px){.nav{padding:0 16px;gap:8px;overflow-x:auto}.main{padding:20px 16px 40px}.g2,.g3,.g4{grid-template-columns:1fr}.swot{grid-template-columns:1fr}.info-grid{grid-template-columns:1fr}.info-grid dt,.info-grid dd{padding:10px 16px}.nav-client{display:none}.employee-grid{grid-template-columns:1fr}.strat-grid{grid-template-columns:1fr}.rapport-header{padding:28px 24px}.card-value{font-size:24px}.upload-box{padding:40px 28px}.sub-nav{width:100%;overflow-x:auto}.rpt-two-col{grid-template-columns:1fr}#mapContainer{height:260px}}
+
+/* Print (fallback) */
+@media print{.nav,.upload-zone,.template-btn,.site-footer,.dl-btn,.sub-nav{display:none!important}.view{display:block!important;page-break-before:always}.view:first-of-type{page-break-before:auto}.view#view-upload{display:none!important}body{background:#fff;font-size:12px}.main{padding:0;max-width:100%}.card,.chart-container,.audit-block,.strat-card,.swot-box,.synth-box,.rapport-exec,.rapport-header,.table-wrap,.rpt-section{box-shadow:none;break-inside:avoid}.card{border:1px solid #ddd}.table-wrap{overflow:visible}table{font-size:11px}th{background:#eee!important;color:#333!important;print-color-adjust:exact}}
+
+/* Utilities */
+.mb-m{margin-bottom:28px}.mt-m{margin-top:28px}
+.divider{height:1px;background:var(--border-light);margin:32px 0}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="nav-brand">Dashboard</div><div class="nav-tabs hidden" id="navTabs"></div><div class="nav-client hidden" id="navClient">Aucun fichier chargé</div></nav>
+<div class="main" id="app">
+  <div class="view active" id="view-upload"><div class="upload-zone"><div class="upload-box" id="dropZone"><h2>Importer la base de données</h2><p>Glissez-déposez ou cliquez pour sélectionner la base de données</p><input type="file" id="fileInput" accept=".xlsx,.xls"></div><button class="template-btn" onclick="downloadTemplate()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Télécharger le document vierge</button></div></div>
+  <div class="view" id="view-dashboard"></div>
+  <div class="view" id="view-finances"></div>
+  <div class="view" id="view-activite"></div>
+  <div class="view" id="view-rh"></div>
+  <div class="view" id="view-marche"></div>
+  <div class="view" id="view-qualitatif"></div>
+  <div class="view" id="view-rapport"></div>
+</div>
+<footer class="site-footer"><p>&copy; <span id="footerYear"></span> — Corentin Duvillard. Tous droits réservés.</p><p style="margin-top:4px">Les données affichées sont strictement confidentielles.</p></footer>
+
+<script>
+document.getElementById('footerYear').textContent=new Date().getFullYear();
+
+/* ═══════════════════════════════════════
+   CONSTANTES
+   ═══════════════════════════════════════ */
+const TABS=[
+  {id:'dashboard',label:'Tableau de bord',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>'},
+  {id:'finances',label:'Finances',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>'},
+  {id:'activite',label:'Activité',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>'},
+  {id:'rh',label:'RH',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>'},
+  {id:'marche',label:'Audit sectoriel',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>'},
+  {id:'qualitatif',label:'Audit interne',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>'},
+  {id:'rapport',label:'Rapport',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>'},
+];
+let DATA={};
+const KPI_TOOLTIPS={"Chiffre d'affaires":"Revenu total HT.","EBITDA":"Excédent brut d'exploitation.","Marge EBITDA":"EBITDA / CA.","Résultat net":"Bénéfice final.","Marge nette":"Résultat net / CA.","Marge brute":"(CA - Coûts directs) / CA.","Current Ratio":"Actif circulant / Passif circulant.","Dette nette / EBITDA":"Années d'EBITDA pour rembourser la dette.","CA / ETP":"CA par équivalent temps plein.","Turnover RH":"Taux de rotation du personnel.","Part top 5 clients":"Concentration CA top 5.","DSO":"Délai paiement clients (jours).","DPO":"Délai paiement fournisseurs (jours).","BFR":"Besoin en fonds de roulement.","ROI":"Résultat net / Total Actif."};
+const COLORS=['#c4a87d','#7a6e60','#5a8a5c','#b88430','#8b7350','#6a9dae','#b04a4a','#a0947f','#4b4036','#d4c4a8'];
+const DL_SVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>';
+
+/* ═══════════════════════════════════════
+   NAV & UPLOAD
+   ═══════════════════════════════════════ */
+function buildNav(){const t=document.getElementById('navTabs');TABS.forEach(tab=>{const b=document.createElement('button');b.className='nav-tab';b.innerHTML=tab.icon+tab.label;b.dataset.view=tab.id;b.onclick=()=>switchView(tab.id);t.appendChild(b)})}
+function switchView(id){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));document.getElementById('view-'+id)?.classList.add('active');document.querySelector(`[data-view="${id}"]`)?.classList.add('active');window.scrollTo({top:0,behavior:'smooth'})}
+function showNav(){document.getElementById('navTabs').classList.remove('hidden');document.getElementById('navClient').classList.remove('hidden')}
+buildNav();
+const dz=document.getElementById('dropZone'),fi=document.getElementById('fileInput');
+dz.onclick=()=>fi.click();dz.ondragover=e=>{e.preventDefault();dz.style.borderColor='var(--camel)'};dz.ondragleave=()=>{dz.style.borderColor='var(--border)'};dz.ondrop=e=>{e.preventDefault();dz.style.borderColor='var(--border)';if(e.dataTransfer.files[0])loadFile(e.dataTransfer.files[0])};fi.onchange=e=>{if(e.target.files[0])loadFile(e.target.files[0])};
+function loadFile(file){const r=new FileReader();r.onload=e=>{const wb=XLSX.read(e.target.result,{type:'array'});parseWorkbook(wb);showNav();renderAll();switchView('dashboard')};r.readAsArrayBuffer(file)}
+
+function downloadTemplate(){
+if(typeof XLSX==='undefined'){alert('XLSX non chargé.');return}
+const wb=XLSX.utils.book_new();
+
+/* Helper : ajoute une feuille avec largeurs de colonnes optionnelles */
+function addSheet(name,data,widths){
+  const ws=XLSX.utils.aoa_to_sheet(data);
+  if(widths) ws['!cols']=widths.map(w=>({wch:w}));
+  XLSX.utils.book_append_sheet(wb,ws,name);
+}
+
+/* 1) README */
+addSheet('README',[
+  ['TEMPLATE — Strat Analyse Generator'],
+  [''],
+  ['OBJECTIF'],
+  ['Cette template sert à collecter les données nécessaires à l\'analyse stratégique d\'une entreprise.'],
+  ['Elle alimente automatiquement le dashboard d\'analyse.'],
+  [''],
+  ['MODE D\'EMPLOI'],
+  ['1. Remplissez chaque feuille en suivant les colonnes indiquées.'],
+  ['2. Laissez vide toute cellule dont vous ne connaissez pas la valeur.'],
+  ['3. Ne modifiez pas les en-têtes de colonnes ni les noms de feuilles.'],
+  ['4. Importez le fichier rempli dans le dashboard.'],
+  [''],
+  ['CONVENTIONS DE SAISIE'],
+  ['Montants : en euros, sans symbole (ex: 150000)'],
+  ['Pourcentages : en décimal (ex: 0.15 pour 15%) ou en valeur (ex: 15)'],
+  ['Dates : format JJ/MM/AAAA'],
+  ['Ratios : valeur numérique (ex: 1.8)'],
+  ['Jours : nombre entier'],
+  ['Notes : valeur numérique (ex: 4.2)'],
+  ['Texte : saisie libre, pas de retour à la ligne forcé'],
+  [''],
+  ['FEUILLES OBLIGATOIRES : Fiche_Client, Dashboard_KPI'],
+  ['FEUILLES RECOMMANDÉES : Financier_CR, Financier_Bilan, Activite, RH_Global'],
+  ['FEUILLES OPTIONNELLES : RH_Effectifs, Marche_Zone, Audit_Interne, KPI_Sectoriels, Documents'],
+  [''],
+  ['PRINCIPE : Laisser vide si inconnu. Ne pas inventer de données.'],
+],[80]);
+
+/* 2) Fiche_Client */
+addSheet('Fiche_Client',[
+  ['Clé','Valeur'],
+  ['— IDENTITÉ —',''],
+  ['Raison sociale',''],
+  ['Nom commercial',''],
+  ['Forme juridique',''],
+  ['SIRET',''],
+  ['— ACTIVITÉ —',''],
+  ['Secteur',''],
+  ['Sous-secteur',''],
+  ['Description activité',''],
+  ['— COORDONNÉES —',''],
+  ['Adresse principale',''],
+  ['Complément adresse',''],
+  ['Ville',''],
+  ['Code postal',''],
+  ['Pays',''],
+  ['— CONTACTS —',''],
+  ['Dirigeant',''],
+  ['Contact principal',''],
+  ['Email',''],
+  ['Téléphone',''],
+  ['Site web',''],
+  ['— STRUCTURE —',''],
+  ['Date de création',''],
+  ['Effectif actuel',''],
+  ['Nombre de sites',''],
+  ['Zone géographique couverte',''],
+  ['— MISSION —',''],
+  ['Synthèse du besoin',''],
+  ['Objectif de la mission',''],
+  ['Observations libres',''],
+],[30,50]);
+
+/* 3) Dashboard_KPI */
+addSheet('Dashboard_KPI',[
+  ['Catégorie','KPI','Unité','N-2','N-1','N','Commentaire','Obligatoire'],
+  ['Rentabilité',"Chiffre d'affaires",'EUR','','','','','Oui'],
+  ['Rentabilité','Variation CA','%','','','','','Oui'],
+  ['Rentabilité','Marge brute','%','','','','','Oui'],
+  ['Rentabilité','EBITDA','EUR','','','','','Oui'],
+  ['Rentabilité','Marge EBITDA','%','','','','','Oui'],
+  ['Rentabilité','Résultat net','EUR','','','','','Oui'],
+  ['Rentabilité','Marge nette','%','','','','','Oui'],
+  ['Rentabilité','ROI','%','','','','Résultat net / Total Actif','Non'],
+  ['Structure','BFR','EUR','','','','','Non'],
+  ['Structure','Current Ratio','x','','','','Actif circulant / Passif circulant','Oui'],
+  ['Structure','Dette nette / EBITDA','x','','','','','Oui'],
+  ['Structure','Trésorerie nette','EUR','','','','','Non'],
+  ['Exploitation','DSO','jours','','','','Délai paiement clients','Non'],
+  ['Exploitation','DPO','jours','','','','Délai paiement fournisseurs','Non'],
+  ['Exploitation','CA / ETP','EUR','','','','','Non'],
+  ['Exploitation','Part top 5 clients','%','','','','','Non'],
+  ['RH','Effectif total','nb','','','','','Non'],
+  ['RH','ETP','nb','','','','','Non'],
+  ['RH','Turnover RH','%','','','','','Non'],
+  ['RH','Masse salariale','EUR','','','','','Non'],
+  ['Synthèse','Constats clés','texte','','','','','Non'],
+  ['Synthèse','Points forts','texte','','','','','Non'],
+  ['Synthèse','Points faibles','texte','','','','','Non'],
+  ['Synthèse','Risques','texte','','','','','Non'],
+  ['Synthèse','Actions 90 jours','texte','','','','','Non'],
+],[14,22,8,14,14,14,30,10]);
+
+/* 4) Financier_CR (Compte de résultat) */
+addSheet('Financier_CR',[
+  ['Section','Poste','Unité','N-2','N-1','N','Commentaire'],
+  ['— PRODUITS —','','','','','',''],
+  ['Produits',"Chiffre d'affaires",'EUR','','','',''],
+  ['Produits','Autres revenus / produits','EUR','','','',''],
+  ['Produits','Production immobilisée','EUR','','','',''],
+  ['','','','','','',''],
+  ['— CHARGES —','','','','','',''],
+  ['Charges','Achats consommés / matières','EUR','','','',''],
+  ['Charges','Sous-traitance','EUR','','','',''],
+  ['Charges','Charges de personnel','EUR','','','',''],
+  ['Charges','Loyers et charges locatives','EUR','','','',''],
+  ['Charges','Énergie','EUR','','','',''],
+  ['Charges','Marketing et communication','EUR','','','',''],
+  ['Charges','Transport et déplacements','EUR','','','',''],
+  ['Charges','Honoraires et prestations','EUR','','','',''],
+  ['Charges','Assurances','EUR','','','',''],
+  ['Charges','Entretien et réparations','EUR','','','',''],
+  ['Charges','Autres charges externes','EUR','','','',''],
+  ['Charges','Impôts et taxes','EUR','','','',''],
+  ['Charges','Dotations amortissements','EUR','','','',''],
+  ['Charges','Provisions','EUR','','','',''],
+  ['','','','','','',''],
+  ['— RÉSULTATS —','','','','','',''],
+  ['Résultat',"Résultat d'exploitation",'EUR','','','',''],
+  ['Résultat','Charges financières','EUR','','','',''],
+  ['Résultat','Produits financiers','EUR','','','',''],
+  ['Résultat','Résultat courant avant impôt','EUR','','','',''],
+  ['Résultat','Impôt sur les bénéfices','EUR','','','',''],
+  ['Résultat','Résultat net','EUR','','','',''],
+  ['','','','','','',''],
+  ['— INDICATEURS —','','','','','',''],
+  ['Indicateur','EBITDA','EUR','','','',''],
+  ['Indicateur','CAPEX','EUR','','','','Investissements corporels et incorporels'],
+],[14,30,8,14,14,14,30]);
+
+/* 5) Financier_Bilan */
+addSheet('Financier_Bilan',[
+  ['Section','Poste','Unité','N-2','N-1','N','Commentaire'],
+  ['— ACTIF —','','','','','',''],
+  ['Actif','Immobilisations incorporelles','EUR','','','',''],
+  ['Actif','Immobilisations corporelles','EUR','','','',''],
+  ['Actif','Immobilisations financières','EUR','','','',''],
+  ['Actif','Stocks','EUR','','','',''],
+  ['Actif','Créances clients','EUR','','','',''],
+  ['Actif','Autres créances','EUR','','','',''],
+  ['Actif','Trésorerie et disponibilités','EUR','','','',''],
+  ['Actif','Total Actif','EUR','','','',''],
+  ['','','','','','',''],
+  ['— PASSIF —','','','','','',''],
+  ['Passif','Capitaux propres','EUR','','','',''],
+  ['Passif','Résultat de l\'exercice','EUR','','','',''],
+  ['Passif','Dettes financières','EUR','','','',''],
+  ['Passif','Dettes fournisseurs','EUR','','','',''],
+  ['Passif','Dettes fiscales et sociales','EUR','','','',''],
+  ['Passif','Autres dettes','EUR','','','',''],
+  ['Passif','Total Passif','EUR','','','',''],
+],[14,30,8,14,14,14,30]);
+
+/* 6) Activite (Activité commerciale) */
+addSheet('Activite',[
+  ['Catégorie','Indicateur','Unité','N-2','N-1','N','Commentaire'],
+  ['Clients','Nombre de clients total','nb','','','',''],
+  ['Clients','Nombre de clients actifs','nb','','','',''],
+  ['Clients','Taux de récurrence','%','','','',''],
+  ['Clients','Taux de réachat','%','','','',''],
+  ['Clients','Part clientèle touristique','%','','','',''],
+  ['Ventes','Nombre de ventes','nb','','','',''],
+  ['Ventes','Nombre de commandes','nb','','','',''],
+  ['Ventes','Nombre de tickets','nb','','','',''],
+  ['Ventes','Panier moyen','EUR','','','',''],
+  ['Ventes','Taux de conversion','%','','','',''],
+  ['Exploitation','Taux d\'occupation','%','','','','Si pertinent (hôtel, restaurant…)'],
+  ['Exploitation','No-show réservations','nb','','','',''],
+  ['Exploitation','Événements privatisés','nb','','','',''],
+  ['Exploitation','Volume produit / prestation','nb','','','','Unité à adapter au secteur'],
+  ['Réputation','Note Google moyenne','note /5','','','',''],
+  ['Réputation','Nombre d\'avis Google','nb','','','',''],
+  ['Concentration','Part top 5 clients','%','','','',''],
+],[14,28,10,14,14,14,30]);
+
+/* 7) RH_Global */
+addSheet('RH_Global',[
+  ['Catégorie','Indicateur','Unité','N-2','N-1','N','Commentaire'],
+  ['Effectifs','Effectif total','nb','','','',''],
+  ['Effectifs','ETP','nb','','','','Équivalents temps plein'],
+  ['Effectifs','Recrutements sur la période','nb','','','',''],
+  ['Effectifs','Départs sur la période','nb','','','',''],
+  ['Coûts','Masse salariale brute','EUR','','','',''],
+  ['Coûts','Salaire moyen brut','EUR','','','',''],
+  ['Coûts','Coût RH par ETP','EUR','','','',''],
+  ['Indicateurs','Turnover','%','','','',''],
+  ['Indicateurs','Absentéisme','%','','','',''],
+  ['Indicateurs','Ancienneté moyenne','nb','','','','En années'],
+],[14,28,10,14,14,14,30]);
+
+/* 8) RH_Effectifs */
+addSheet('RH_Effectifs',[
+  ['ID','Nom','Prénom','Poste','Service','Site','Manager','Type de contrat','Temps de travail','Statut','Date d\'entrée','Date de sortie','Ancienneté','Rémunération annuelle brute','ETP','Commentaire'],
+  ['','','','','','','','','','','','','','','',''],
+  ['','','','','','','','','','','','','','','',''],
+  ['','','','','','','','','','','','','','','',''],
+  ['','','','','','','','','','','','','','','',''],
+  ['','','','','','','','','','','','','','','',''],
+],[6,14,14,18,14,12,14,14,14,10,14,14,10,18,6,20]);
+
+/* 9) Marche_Zone */
+addSheet('Marche_Zone',[
+  ['Clé','Valeur'],
+  ['— POSITIONNEMENT —',''],
+  ['Positionnement prix',''],
+  ['Positionnement qualité',''],
+  ['Tendance de marché 3 ans',''],
+  ['Saisonnalité',''],
+  ['— CLIENTÈLE —',''],
+  ['Typologie clientèle cible',''],
+  ['Ticket / budget client',''],
+  ['— CONCURRENCE —',''],
+  ['3 concurrents principaux',''],
+  ['Prix marché observé',''],
+  ['— ENVIRONNEMENT —',''],
+  ['Facteurs macro clés',''],
+  ['Facteurs micro locaux',''],
+  ['— ZONE DE CHALANDISE —',''],
+  ['Zone primaire',''],
+  ['Zone secondaire',''],
+  ['Zone tertiaire',''],
+  ['Rayon zone primaire',''],
+  ['Rayon zone secondaire',''],
+  ['Rayon zone tertiaire',''],
+  ['Rayon estimé / temps accès',''],
+  ['— OPPORTUNITÉS / RISQUES —',''],
+  ['Opportunités de zone',''],
+  ['Risques de zone',''],
+],[35,50]);
+
+/* 10) Audit_Interne */
+addSheet('Audit_Interne',[
+  ['Clé','Valeur'],
+  ['— SWOT —',''],
+  ['Forces',''],
+  ['Faiblesses',''],
+  ['Opportunités',''],
+  ['Menaces',''],
+  ['— DIAGNOSTIC —',''],
+  ['Proposition de valeur',''],
+  ['Produits / services principaux',''],
+  ['Process et organisation',''],
+  ['Outils et SI',''],
+  ['Qualité de pilotage',''],
+  ['Dépendances critiques',''],
+  ['Points de vigilance',''],
+  ['— STRATÉGIE —',''],
+  ['Hypothèses du dirigeant',''],
+  ['Risques identifiés',''],
+  ['Priorités 12 mois',''],
+  ['Besoins spécifiques',''],
+  ['Recommandations brèves',''],
+  ['Commentaires analyste',''],
+],[35,50]);
+
+/* 11) KPI_Sectoriels */
+addSheet('KPI_Sectoriels',[
+  ['Catégorie','KPI','Unité','Valeur entreprise','Benchmark bas','Benchmark médian','Benchmark haut','Source','Commentaire'],
+  ['','','','','','','','',''],
+  ['','','','','','','','',''],
+  ['','','','','','','','',''],
+],[14,22,8,16,14,14,14,20,24]);
+
+/* 12) Documents */
+addSheet('Documents',[
+  ['Catégorie','Document demandé','Obligatoire','Reçu','Date de réception','Statut','Commentaire'],
+  ['Juridique','Statuts à jour','Oui','','','',''],
+  ['Juridique','Kbis < 3 mois','Oui','','','',''],
+  ['Comptable','Bilans 3 derniers exercices','Oui','','','',''],
+  ['Comptable','Comptes de résultat 3 ans','Oui','','','',''],
+  ['Comptable','Balance clients','Non','','','',''],
+  ['Comptable','Balance fournisseurs','Non','','','',''],
+  ['Fiscal','Liasses fiscales 3 ans','Oui','','','',''],
+  ['Fiscal','Avis d\'imposition','Non','','','',''],
+  ['Social','DADS / DSN','Non','','','',''],
+  ['Social','Registre du personnel','Non','','','',''],
+  ['Contrats','Bail commercial','Non','','','',''],
+  ['Contrats','Contrats fournisseurs clés','Non','','','',''],
+  ['Contrats','Contrats clients clés','Non','','','',''],
+  ['Banque','Relevés bancaires 12 mois','Non','','','',''],
+  ['Banque','Tableaux d\'amortissement prêts','Non','','','',''],
+],[14,30,10,8,16,12,24]);
+
+/* 13) Parametres_Parsing */
+addSheet('Parametres_Parsing',[
+  ['Paramètre','Valeur','Description'],
+  ['version_template','2.0','Version de la template'],
+  ['devise','EUR','Devise par défaut'],
+  ['format_pourcentage','décimal ou entier','0.15 ou 15 acceptés'],
+  ['format_date','JJ/MM/AAAA',''],
+  ['separateur_decimal',',','Virgule française'],
+  ['champs_obligatoires','Fiche_Client, Dashboard_KPI','Feuilles minimales requises'],
+],[24,20,40]);
+
+XLSX.writeFile(wb,'Template - Strat analyse Generator.xlsx');
+}
+
+/* ═══════════════════════════════════════
+   PARSING EXCEL — COUCHE NORMALISÉE
+   ═══════════════════════════════════════ */
+
+/** Normalise une clé pour comparaison tolérante (casse, accents, espaces, ponctuation) */
+function normalizeKey(s){
+  if(!s)return'';
+  return String(s).trim().toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/[''`]/g,"'")
+    .replace(/[\s_\-/]+/g,' ')
+    .replace(/[^a-z0-9 ']/g,'')
+    .trim();
+}
+
+/** Lit une feuille clé/valeur (col0=clé, col1=valeur), ignore les séparateurs "—" */
+function sheetToKV(ws){
+  const o={};
+  const range=XLSX.utils.decode_range(ws['!ref']||'A1');
+  for(let r=range.s.r;r<=range.e.r;r++){
+    const kC=ws[XLSX.utils.encode_cell({r,c:0})],vC=ws[XLSX.utils.encode_cell({r,c:1})];
+    if(kC&&kC.v!=null){
+      const k=String(kC.v).trim();
+      if(/^—/.test(k))continue;
+      o[k]=vC?vC.v:'';
+    }
+  }
+  return o;
+}
+
+function sheetToTable(ws){return XLSX.utils.sheet_to_json(ws,{header:1,defval:''})}
+
+/** Cherche une feuille par nom, avec fallbacks */
+function findSheet(wb,names){for(const n of names){if(wb.Sheets[n])return wb.Sheets[n]}return null}
+
+/** Détecte les colonnes d'un tableau par header. Retourne un mapping headerNormalisé→indexColonne */
+function detectHeaders(rows){
+  if(!rows||!rows.length)return{headerRow:-1,map:{}};
+  for(let i=0;i<Math.min(rows.length,5);i++){
+    const row=rows[i];
+    if(!row)continue;
+    let hits=0;
+    for(let c=0;c<row.length;c++){if(row[c]&&String(row[c]).trim()!=='')hits++}
+    if(hits>=2){
+      const map={};
+      for(let c=0;c<row.length;c++){
+        const v=String(row[c]||'').trim();
+        if(v)map[normalizeKey(v)]=c;
+      }
+      return{headerRow:i,map};
+    }
+  }
+  return{headerRow:-1,map:{}};
+}
+
+/** Trouve l'index de colonne par nom tolérant */
+function colIdx(headerMap,names){
+  for(const n of names){
+    const nk=normalizeKey(n);
+    if(headerMap[nk]!==undefined)return headerMap[nk];
+    // partial match
+    for(const[k,v] of Object.entries(headerMap)){
+      if(k.includes(nk)||nk.includes(k))return v;
+    }
+  }
+  return-1;
+}
+
+/**
+ * Parse une feuille tabulaire structurée (Dashboard_KPI, Financier_CR, etc.)
+ * Retourne: { periodLabels:[], rows:[ {label,unit,n2,n1,n,comment,category,isSection} ], map:{normalizedLabel→row} }
+ */
+function parseStructuredSheet(ws, labelNames, unitNames, periodNames, commentNames, categoryNames){
+  if(!ws)return{periodLabels:['N-2','N-1','N'],rows:[],map:{}};
+  const raw=sheetToTable(ws);
+  const{headerRow,map:hm}=detectHeaders(raw);
+  if(headerRow<0)return{periodLabels:['N-2','N-1','N'],rows:[],map:{}};
+
+  const cLabel=colIdx(hm,labelNames||['kpi','indicateur','poste','cle','libelle','intitule','nom']);
+  const cUnit=colIdx(hm,unitNames||['unite','unit','type']);
+  const cCat=colIdx(hm,categoryNames||['categorie','category','section','theme']);
+  const cComment=colIdx(hm,commentNames||['commentaire','comment','commentaires','notes','observation']);
+
+  // Find period columns (N-2, N-1, N)
+  let cN2=-1,cN1=-1,cN=-1;
+
+  for(const[k,v] of Object.entries(hm)){
+    if(cN2<0&&(k==='n 2'||k==='n2'||k==='n-2'||/^n\s*-\s*2$/.test(k)))cN2=v;
+    if(cN1<0&&(k==='n 1'||k==='n1'||k==='n-1'||/^n\s*-\s*1$/.test(k)))cN1=v;
+    if(cN<0&&(k==='n'||k==='valeur entreprise'))cN=v;
+  }
+  // Fallback: assume 3 consecutive numeric columns after unit
+  if(cN2<0&&cN1<0&&cN<0){
+    const start=(cUnit>=0?cUnit:cLabel>=0?cLabel:0)+1;
+    cN2=start; cN1=start+1; cN=start+2;
+  }else if(cN2>=0&&cN1<0){cN1=cN2+1;cN=cN2+2}
+  else if(cN<0&&cN1>=0){cN=cN1+1}
+
+  // Extract period labels from header row
+  const hr=raw[headerRow];
+  const periodLabels=[
+    hr[cN2]!=null?String(hr[cN2]):'N-2',
+    hr[cN1]!=null?String(hr[cN1]):'N-1',
+    hr[cN]!=null?String(hr[cN]):'N'
+  ];
+
+  const rows=[], rmap={};
+  let currentCat='';
+  for(let i=headerRow+1;i<raw.length;i++){
+    const r=raw[i];
+    if(!r)continue;
+
+    // Detect section headers "— XXXX —"
+    const firstCell=String(r[0]||'').trim();
+    if(/^—/.test(firstCell)){
+      rows.push({label:firstCell,unit:'',n2:null,n1:null,n:null,comment:'',category:'',isSection:true});
+      continue;
+    }
+
+    const label=(cLabel>=0?String(r[cLabel]||'').trim():firstCell);
+    if(!label)continue;
+
+    const cat=cCat>=0?String(r[cCat]||'').trim():'';
+    if(cat&&!/^—/.test(cat))currentCat=cat;
+    const unit=cUnit>=0?String(r[cUnit]||'').trim():'';
+    const n2=r[cN2]!=null?r[cN2]:null;
+    const n1=r[cN1]!=null?r[cN1]:null;
+    const n=r[cN]!=null?r[cN]:null;
+    const comment=cComment>=0?String(r[cComment]||'').trim():'';
+
+    const row={label,unit,n2,n1,n,comment,category:currentCat,isSection:false};
+    rows.push(row);
+    rmap[normalizeKey(label)]=row;
+  }
+  return{periodLabels,rows,map:rmap};
+}
+
+/** Safenum */
+function safeNum(v){if(v===''||v==null||v===undefined)return null;const n=Number(v);return isNaN(n)?null:n}
+
+/** Parse le workbook complet et alimente DATA */
+function parseWorkbook(wb){
+  // --- Client ---
+  const clSheet=findSheet(wb,['Fiche_Client','Client','Fiche_client']);
+  DATA.client=clSheet?sheetToKV(clSheet):{};
+  if(!DATA.client['Ville / Code postal']&&(DATA.client['Ville']||DATA.client['Code postal'])){
+    DATA.client['Ville / Code postal']=[DATA.client['Ville'],DATA.client['Code postal']].filter(Boolean).join(' ');
+  }
+
+  // --- KPI ---
+  const kpiSheet=findSheet(wb,['Dashboard_KPI','KPI','Dashboard']);
+  DATA.kpiParsed=parseStructuredSheet(kpiSheet,['kpi','indicateur','libelle'],['unite','unit'],null,['commentaire'],['categorie','category']);
+  // Also store synthese text fields separately
+  DATA.kpiSynthese={};
+  DATA.kpiParsed.rows.forEach(r=>{
+    if(!r.isSection){
+      const u=normalizeKey(r.unit);
+      if(u==='texte'||u==='text'){
+        // For text KPIs, take first non-empty value
+        const val=r.n||r.n1||r.n2||r.comment||'';
+        if(val)DATA.kpiSynthese[r.label]=val;
+      }
+    }
+  });
+
+  // --- Finances ---
+  const crSheet=findSheet(wb,['Financier_CR','Financier_Compte_Resultat','Financier_3Ans','Compte_Resultat']);
+  const bilanSheet=findSheet(wb,['Financier_Bilan','Bilan']);
+  DATA.finCR=parseStructuredSheet(crSheet,['poste','libelle','intitule'],['unite'],null,['commentaire'],['section']);
+  DATA.finBilan=parseStructuredSheet(bilanSheet,['poste','libelle','intitule'],['unite'],null,['commentaire'],['section']);
+  // Merged fin rows for charts/rapport (CR then Bilan)
+  DATA.finAll={
+    periodLabels:DATA.finCR.periodLabels.some(l=>l!=='N-2')?DATA.finCR.periodLabels:DATA.finBilan.periodLabels,
+    rows:[...DATA.finCR.rows,{label:'',isSection:true,unit:'',n2:null,n1:null,n:null,comment:'',category:''},...DATA.finBilan.rows],
+    map:{...DATA.finCR.map,...DATA.finBilan.map}
+  };
+
+  // --- Activite ---
+  const actSheet=findSheet(wb,['Activite','Activite_Commerciale','Activité']);
+  DATA.actParsed=parseStructuredSheet(actSheet,['indicateur','kpi','libelle','poste'],['unite'],null,['commentaire'],['categorie']);
+
+  // --- RH ---
+  const rhGSheet=findSheet(wb,['RH_Global','RH']);
+  DATA.rhParsed=parseStructuredSheet(rhGSheet,['indicateur','kpi','libelle'],['unite'],null,['commentaire'],['categorie']);
+  const rhESheet=findSheet(wb,['RH_Effectifs']);
+  DATA.rhEffectifs=rhESheet?sheetToTable(rhESheet):[];
+
+  // --- Marche ---
+  const marcheSheet=findSheet(wb,['Marche_Zone','Marché']);
+  DATA.marche=marcheSheet?sheetToKV(marcheSheet):{};
+
+  // --- Audit Interne ---
+  const qualSheet=findSheet(wb,['Audit_Interne','Qualitatif']);
+  DATA.qual=qualSheet?sheetToKV(qualSheet):{};
+
+  // --- KPI Sectoriels ---
+  const kpiSectSheet=findSheet(wb,['KPI_Sectoriels']);
+  DATA.kpiSectoriels=kpiSectSheet?sheetToTable(kpiSectSheet):[];
+
+  // --- Documents ---
+  const docSheet=findSheet(wb,['Documents','Documents_Demandes']);
+  DATA.documents=docSheet?sheetToTable(docSheet):[];
+
+  // --- Parametres ---
+  const paramSheet=findSheet(wb,['Parametres_Parsing','Parametres']);
+  DATA.params=paramSheet?sheetToKV(paramSheet):{};
+
+  // --- Legacy compat: populate old DATA fields for any code that still references them ---
+  DATA.clientName=DATA.client['Raison sociale']||DATA.client['Nom commercial']||'Entreprise';
+  document.getElementById('navClient').textContent=DATA.clientName;
+}
+
+/* ═══════════════════════════════════════
+   ACCESSEURS NORMALISÉS
+   ═══════════════════════════════════════ */
+
+/** Récupère une valeur KPI par nom et période ('n2','n1','n') */
+function getKPI(name,period){
+  const row=DATA.kpiParsed.map[normalizeKey(name)];
+  if(!row)return null;
+  const v=period==='n2'?row.n2:period==='n1'?row.n1:row.n;
+  return safeNum(v);
+}
+
+/** Récupère un texte de synthèse KPI */
+function getKPISynthese(name){
+  // Try exact match first
+  if(DATA.kpiSynthese[name])return DATA.kpiSynthese[name];
+  // Try normalized
+  const nk=normalizeKey(name);
+  for(const[k,v] of Object.entries(DATA.kpiSynthese)){
+    if(normalizeKey(k)===nk)return v;
+  }
+  return null;
+}
+
+/** Récupère une valeur financière par nom de poste et période */
+function getFinValue(name,period){
+  const row=DATA.finAll.map[normalizeKey(name)];
+  if(!row)return null;
+  const v=period==='n2'?row.n2:period==='n1'?row.n1:row.n;
+  return safeNum(v);
+}
+
+/** Récupère une valeur activité par nom */
+function getActValue(name,period){
+  const row=DATA.actParsed.map[normalizeKey(name)];
+  if(!row)return null;
+  const v=period==='n2'?row.n2:period==='n1'?row.n1:row.n;
+  return safeNum(v);
+}
+
+/* ═══════════════════════════════════════
+   HELPERS — formatage, unités, sécurité
+   ═══════════════════════════════════════ */
+function fmtNum(n,d){if(d===0)return Math.round(n).toLocaleString('fr-FR');return n.toLocaleString('fr-FR',{minimumFractionDigits:0,maximumFractionDigits:d||2})}
+function fmt(v,type){if(v===''||v==null||v===undefined)return'—';const n=Number(v);if(isNaN(n))return String(v);switch(type){case'eur':return fmtNum(n,n%1===0?0:2)+' €';case'pct':{const p=Math.abs(n)<1&&n!==0?n*100:n;return fmtNum(p,p%1===0?0:2)+' %'}case'pct_raw':return fmtNum(n,n%1===0?0:2)+' %';case'days':return fmtNum(n,n%1===0?0:1)+' j';case'x':return fmtNum(n,1)+'x';case'int':return Math.round(n).toLocaleString('fr-FR');case'note':return fmtNum(n,1);case'ratio':return fmtNum(n,2);default:return fmtNum(n,n%1===0?0:2)}}
+function h(s){return s==null?'':String(s).replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function valCls(v){const n=safeNum(v);if(n===null)return'';return n>0?'val-pos':n<0?'val-neg':''}
+function initials(n){if(!n)return'?';return String(n).split(/\s+/).map(w=>w[0]).join('').toUpperCase().slice(0,2)}
+
+function unitType(u){if(!u)return'';const s=String(u).trim().toLowerCase();if('€ eur euro euros'.split(' ').includes(s))return'eur';if(s==='%'||s==='pct')return'pct_raw';if(s==='jours'||s==='j')return'days';if(s==='x'||s==='fois')return'x';if('etp nb nombre pers collaborateurs salariés'.split(' ').includes(s))return'int';if(/^note/.test(s)||s==='/5'||s==='/10'||s==='/20')return'note';return''}
+function detectTypeByLabel(l){if(!l)return'';const s=String(l).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');if(/%|taux|marge|part |ratio de|turnover|absenteisme|rotation|recurrence/.test(s))return'pct_raw';if(/note |score|rating|avis|google|satisfaction|nps/.test(s))return'note';if(/dso|dpo|delai|jours|duree/.test(s))return'days';if(/dette.*ebitda|levier|current ratio|quick ratio|coverage|gearing/.test(s))return'x';if(/effectif|etp|salarie|employe|collaborat|nombre|nb |clients actifs|commandes|tickets|visites|no.show|volume/.test(s))return'int';if(/chiffre|ca |revenu|ebitda|resultat|benefice|perte|charges|cout|salaire|remuneration|masse salariale|bfr|tresorerie|capitaux|actif|passif|dette|panier moyen|prix|loyer|invest/.test(s))return'eur';return''}
+function resolveType(label,unit){return unitType(unit)||detectTypeByLabel(label)||''}
+function resolveRowType(row){return unitType(row.unit)||detectTypeByLabel(row.label)||''}
+
+function kpiCard(title,val,type,sub,alertFn){const tip=KPI_TOOLTIPS[title];const tipH=tip?`<span class="tooltip-wrap"><span class="tooltip-icon">?</span><span class="tooltip-content"><strong>${h(title)}</strong>${h(tip)}</span></span>`:'';let aH='';if(alertFn&&val!=null&&!isNaN(Number(val))){const[c,l]=alertFn(Number(val));aH=`<div class="card-badge ${c}">${l}</div>`}return`<div class="card"><div class="card-title">${h(title)} ${tipH}</div><div class="card-value">${fmt(val,type)}</div>${sub?`<div class="card-sub">${sub}</div>`:''}${aH}</div>`}
+
+function chartDefaults(){return{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{family:'Source Sans 3',size:12},color:'#7a6e60',padding:16,usePointStyle:true,pointStyle:'circle'}},tooltip:{backgroundColor:'#4b4036',titleFont:{family:'Source Sans 3'},bodyFont:{family:'Source Sans 3'},cornerRadius:8,padding:12}}}}
+function scalesEur(){return{y:{ticks:{callback:v=>fmt(v,'eur'),font:{size:11},color:'#a0947f'},grid:{color:'rgba(196,168,125,.12)'}},x:{ticks:{font:{size:12},color:'#7a6e60'},grid:{display:false}}}}
+
+/* Sous-onglets — fonction unique partagée */
+function switchSubTab(id,btn,opts){const p=btn.closest('.view');p.querySelectorAll('.rh-sub-view').forEach(v=>v.classList.remove('active'));p.querySelectorAll('.sub-nav-btn').forEach(b=>b.classList.remove('active'));document.getElementById(id)?.classList.add('active');btn?.classList.add('active');if(opts?.onSwitch)opts.onSwitch()}
+
+/* ═══════════════════════════════════════
+   CALCULS MÉTIER
+   ═══════════════════════════════════════ */
+
+function computeROI(){
+  let rn=getKPI("Résultat net",'n');
+  if(rn===null)rn=getFinValue("Résultat net",'n');
+  if(rn===null)return null;
+  // ROI from KPI sheet
+  const roiKpi=getKPI("ROI",'n');
+  if(roiKpi!==null)return roiKpi;
+  // Calculate: RN / Total Actif
+  let ta=getFinValue("Total Actif",'n');
+  let cp=getFinValue("Capitaux propres",'n');
+  if(ta&&ta!==0)return rn/ta;
+  if(cp&&cp!==0)return rn/cp;
+  return null;
+}
+
+function computePanierMoyen(){
+  const ca=getKPI("Chiffre d'affaires",'n');
+  if(!ca||ca<=0)return{value:null,source:null};
+  // 1) Donnée brute prioritaire
+  const pmBrut=getActValue("Panier moyen",'n');
+  if(pmBrut!=null&&pmBrut>0&&pmBrut<ca)return{value:pmBrut,source:'brut'};
+  // 2) Calcul fallback depuis volumes
+  const prio=[
+    /nombre.*ventes|ventes.*total|nb.*ventes/i,
+    /nombre.*tickets|nb.*tickets/i,
+    /nombre.*commandes|nb.*commandes/i,
+    /clients.*actifs|nombre.*clients|nb.*clients/i
+  ];
+  for(const rx of prio){
+    for(const[,row] of Object.entries(DATA.actParsed.map)){
+      if(rx.test(row.label)){const d=safeNum(row.n);if(d&&d>0)return{value:ca/d,source:'calculé'}}
+    }
+    for(const[,row] of Object.entries(DATA.kpiParsed.map)){
+      if(rx.test(row.label)){const d=safeNum(row.n);if(d&&d>0)return{value:ca/d,source:'calculé'}}
+    }
+  }
+  return{value:null,source:null};
+}
+
+function extractChargesRecettes(){
+  const rows=DATA.finAll.rows;
+  const ch=[],re=[];
+  let sec='';
+
+  // Exclusion list: results, margins, aggregates — never in structure charts
+  const EXCLUDE=/^(resultat|ebitda|ebit[^d]|marge|benefice|perte|solde|total|excedent|capex|capacite.*autofinancement|cash.?flow)/i;
+
+  for(const r of rows){
+    if(!r||r.isSection){
+      const lb=(r&&r.label||'').toLowerCase();
+      if(/produit|recette|revenu/.test(lb))sec='r';
+      else if(/charge|depense|cout/.test(lb))sec='c';
+      else if(/resultat|solde|indicat/.test(lb))sec='x';
+      else if(/bilan|actif|passif/.test(lb))sec='x';
+      continue;
+    }
+    const lb=r.label, lo=lb.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''), vl=safeNum(r.n);
+    if(vl===null||vl===0)continue;
+
+    // Always exclude results/margins/aggregates regardless of section
+    if(EXCLUDE.test(lo))continue;
+
+    // Use category field as secondary signal
+    const cat=(r.category||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+    const catIsCharge=/^charge/.test(cat);
+    const catIsProduit=/^produit/.test(cat);
+    const catIsResult=/^resultat|^indicat/.test(cat);
+
+    // Skip anything categorised as result/indicator
+    if(catIsResult)continue;
+
+    const isCh=/charge|cout|achat|loyer|salaire|personnel|amortiss|depreci|frais|impot|tax|interet|assurance|entretien|sous.trait|honoraire|extern|energie|provision|marketing|transport|communication/i.test(lo);
+    const isRe=/chiffre.*affaires|^ca$|revenu|produit|vente|subvention|prestation|commission|production.*immobilis/i.test(lo);
+
+    if(sec==='c'||catIsCharge||(!sec&&!catIsProduit&&isCh))ch.push({label:lb,value:Math.abs(vl)});
+    else if(sec==='r'||catIsProduit||(!sec&&!catIsCharge&&isRe))re.push({label:lb,value:Math.abs(vl)});
+  }
+  return{charges:ch,recettes:re};
+}
+
+/* ═══════════════════════════════════════
+   GEOCODING & CARTE
+   ═══════════════════════════════════════ */
+async function geocodeAddress(address,city){for(const q of[address,city].filter(Boolean)){try{const res=await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(q)}`,{headers:{'Accept-Language':'fr'}});if(!res.ok)continue;const d=await res.json();if(d.length>0)return{lat:parseFloat(d[0].lat),lon:parseFloat(d[0].lon)}}catch(e){console.warn('Geocoding error:',e)}}return null}
+
+async function initMap(id){const el=document.getElementById(id);if(!el)return;const c=DATA.client,m=DATA.marche;const addr=[c['Adresse principale'],c['Ville / Code postal']].filter(Boolean).join(', ');const city=c['Ville / Code postal']||'';if(!addr&&!city){el.innerHTML='<div class="map-error">Aucune adresse disponible.</div>';return}el.innerHTML='<div class="map-error">Géocodage en cours…</div>';const geo=await geocodeAddress(addr,city);if(!geo){el.innerHTML='<div class="map-error">Adresse introuvable. Vérifiez la fiche entreprise.</div>';return}el.innerHTML='';el.style.height='380px';const map=L.map(id,{scrollWheelZoom:false}).setView([geo.lat,geo.lon],14);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap',maxZoom:19}).addTo(map);L.marker([geo.lat,geo.lon]).addTo(map).bindPopup(`<strong>${h(DATA.clientName)}</strong><br>${h(addr)}`).openPopup();const pR=(s,d)=>{if(!s)return d;const n=parseFloat(String(s).replace(/[^\d.,]/g,'').replace(',','.'));return(isNaN(n)||n<=0)?d:n<100?n*1000:n};const r1=pR(m['Rayon zone primaire']||m['Rayon primaire'],1000),r2=pR(m['Rayon zone secondaire']||m['Rayon secondaire'],3000),r3=pR(m['Rayon zone tertiaire']||m['Rayon tertiaire'],7000);L.circle([geo.lat,geo.lon],{radius:r3,color:'#a0947f',fillColor:'#a0947f',fillOpacity:.06,weight:1.5,dashArray:'6 4'}).addTo(map).bindTooltip('Zone tertiaire');L.circle([geo.lat,geo.lon],{radius:r2,color:'#c4a87d',fillColor:'#c4a87d',fillOpacity:.08,weight:1.5,dashArray:'6 4'}).addTo(map).bindTooltip('Zone secondaire');L.circle([geo.lat,geo.lon],{radius:r1,color:'#8b7350',fillColor:'#8b7350',fillOpacity:.12,weight:2}).addTo(map).bindTooltip('Zone primaire');map.fitBounds(L.circle([geo.lat,geo.lon],{radius:r3}).getBounds(),{padding:[30,30]});setTimeout(()=>map.invalidateSize(),300);DATA._map=map}
+
+/* ═══════════════════════════════════════
+   RENDER ALL
+   ═══════════════════════════════════════ */
+function renderAll(){renderDashboard();renderFinances();renderActivite();renderRH();renderMarche();renderQualitatif();renderRapport()}
+
+/* ═══════════════════════════════════════
+   DASHBOARD
+   ═══════════════════════════════════════ */
+function renderDashboard(){
+  const el=document.getElementById('view-dashboard');
+  let html=`<div class="section"><div class="section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Tableau de bord — ${h(DATA.clientName)}</div></div>`;
+
+  const synth=[
+    ['Constats clés',getKPISynthese('Constats clés')],
+    ['Points forts',getKPISynthese('Points forts')],
+    ['Points faibles',getKPISynthese('Points faibles')],
+    ['Risques',getKPISynthese('Risques')],
+    ['Actions 90j',getKPISynthese('Actions 90 jours')]
+  ].filter(s=>s[1]);
+  if(synth.length){
+    html+=`<div class="section"><div class="section-title">Synthèse</div><div class="grid g2">`;
+    synth.forEach(([l,v])=>{html+=`<div class="audit-block audit-highlight"><h4>${h(l)}</h4><p>${h(v)}</p></div>`});
+    html+='</div></div>';
+  }
+
+  const roi=computeROI();
+  const caN=getKPI("Chiffre d'affaires",'n');
+  const varCA=getKPI("Variation CA",'n');
+  const ebitdaN=getKPI("EBITDA",'n');
+  const margEBITDA=getKPI("Marge EBITDA",'n');
+  const rnN=getKPI("Résultat net",'n');
+  const margNette=getKPI("Marge nette",'n');
+  const cr=getKPI("Current Ratio",'n');
+  const dnEbitda=getKPI("Dette nette / EBITDA",'n');
+  const caEtp=getKPI("CA / ETP",'n');
+  const turnover=getKPI("Turnover RH",'n')||getKPI("Turnover",'n');
+
+  html+='<div class="grid g4 mb-m">';
+  html+=kpiCard("Chiffre d'affaires",caN,'eur',varCA!=null?fmt(varCA,'pct')+' vs N-1':'');
+  html+=kpiCard('EBITDA',ebitdaN,'eur',margEBITDA!=null?'Marge '+fmt(margEBITDA,'pct'):'');
+  html+=kpiCard('Résultat net',rnN,'eur',margNette!=null?'Marge nette '+fmt(margNette,'pct'):'',x=>x<0?['badge-red','Déficit']:['badge-green','Positif']);
+  html+=kpiCard('ROI',roi,'pct_raw',roi!=null?'Résultat net / Actif':'Données insuffisantes',roi!=null?(x=>x<0?['badge-red','Négatif']:x>0.1?['badge-green','Bon']:['badge-orange','Faible']):null);
+  html+=kpiCard('Current Ratio',cr,'x','',x=>x<1?['badge-red','Risque']:x>1.5?['badge-green','Confortable']:['badge-orange','Juste']);
+  html+=kpiCard('Dette nette / EBITDA',dnEbitda,'x','',x=>x>3?['badge-red','Élevé']:x>2?['badge-orange','Attention']:['badge-green','OK']);
+  html+=kpiCard('CA / ETP',caEtp,'eur');
+  html+=kpiCard('Turnover RH',turnover,'pct','',x=>{const p=Math.abs(x)<1?x*100:x;return p>20?['badge-red','Élevé']:['badge-green','Stable']});
+  html+='</div>';
+
+  html+=`<div class="grid g2 mb-m"><div class="chart-container"><h3>CA & EBITDA — Évolution 3 ans</h3><canvas id="chartCA"></canvas></div><div class="chart-container"><h3>Marges — Évolution 3 ans</h3><canvas id="chartMarges"></canvas></div></div>`;
+  html+=`<div class="section"><div class="section-title">Détail KPI</div></div>`;
+  html+=buildKPITable();
+  el.innerHTML=html;
+
+  setTimeout(()=>{
+    const yrs=DATA.kpiParsed.periodLabels;
+    const caArr=[getKPI("Chiffre d'affaires",'n2'),getKPI("Chiffre d'affaires",'n1'),caN].map(x=>x||0);
+    const ebArr=[getKPI("EBITDA",'n2'),getKPI("EBITDA",'n1'),ebitdaN].map(x=>x||0);
+    new Chart(document.getElementById('chartCA'),{type:'bar',data:{labels:yrs,datasets:[{label:"CA",data:caArr,backgroundColor:'rgba(196,168,125,.6)',borderRadius:8,borderSkipped:false},{label:'EBITDA',data:ebArr,backgroundColor:'rgba(75,64,54,.5)',borderRadius:8,borderSkipped:false}]},options:{...chartDefaults(),scales:scalesEur()}});
+
+    const mb=[getKPI("Marge brute",'n2'),getKPI("Marge brute",'n1'),getKPI("Marge brute",'n')].map(x=>x?x*100:0);
+    const me=[getKPI("Marge EBITDA",'n2'),getKPI("Marge EBITDA",'n1'),getKPI("Marge EBITDA",'n')].map(x=>x?x*100:0);
+    const mn=[getKPI("Marge nette",'n2'),getKPI("Marge nette",'n1'),getKPI("Marge nette",'n')].map(x=>x?x*100:0);
+    new Chart(document.getElementById('chartMarges'),{type:'line',data:{labels:yrs,datasets:[{label:'Marge brute %',data:mb,borderColor:'#c4a87d',backgroundColor:'rgba(196,168,125,.12)',tension:.35,pointRadius:5,pointBackgroundColor:'#c4a87d',borderWidth:2.5,fill:true,order:3},{label:'Marge EBITDA %',data:me,borderColor:'#7a6e60',backgroundColor:'rgba(122,110,96,.10)',tension:.35,pointRadius:5,pointBackgroundColor:'#7a6e60',borderWidth:2.5,fill:true,order:2},{label:'Marge nette %',data:mn,borderColor:'#5a8a5c',backgroundColor:'rgba(90,138,92,.10)',tension:.35,pointRadius:5,pointBackgroundColor:'#5a8a5c',borderWidth:2.5,fill:true,order:1}]},options:{...chartDefaults(),scales:{y:{ticks:{callback:v=>v.toFixed(1)+' %',font:{size:11},color:'#a0947f'},grid:{color:'rgba(196,168,125,.12)'}},x:{ticks:{font:{size:12},color:'#7a6e60'},grid:{display:false}}}}});
+  },60);
+}
+
+function buildKPITable(){
+  const rows=DATA.kpiParsed.rows;
+  if(!rows.length)return'';
+  let html='<div class="table-wrap"><table><thead><tr><th>KPI</th><th>'+DATA.kpiParsed.periodLabels.join('</th><th>')+'</th></tr></thead><tbody>';
+  let lastCat='';
+  for(const r of rows){
+    if(r.isSection)continue;
+    // Skip text-only synthese rows
+    if(normalizeKey(r.unit)==='texte'||normalizeKey(r.unit)==='text')continue;
+    // Category section header
+    if(r.category&&r.category!==lastCat){
+      html+=`<tr class="row-section"><td colspan="4">${h(r.category)}</td></tr>`;
+      lastCat=r.category;
+    }
+    const t=resolveRowType(r);
+    html+=`<tr><td>${h(r.label)}</td><td>${fmt(r.n2,t)}</td><td>${fmt(r.n1,t)}</td><td>${fmt(r.n,t)}</td></tr>`;
+  }
+  html+='</tbody></table></div>';
+  return html;
+}
+
+/* ═══════════════════════════════════════
+   FINANCES
+   ═══════════════════════════════════════ */
+function renderFinances(){
+  const el=document.getElementById('view-finances');
+  if(!DATA.finCR.rows.length&&!DATA.finBilan.rows.length){el.innerHTML='<p style="color:var(--text2)">Aucune donnée financière.</p>';return}
+  let html=`<div class="section"><div class="section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Données Financières — 3 Ans</div></div>`;
+  html+=`<div class="sub-nav mb-m"><button class="sub-nav-btn active" onclick="switchSubTab('fin-synthese',this)">Synthèse</button><button class="sub-nav-btn" onclick="switchSubTab('fin-cdr',this)">Compte de résultat</button><button class="sub-nav-btn" onclick="switchSubTab('fin-bilan',this)">Bilan</button></div>`;
+
+  // Synthèse sub-view
+  html+='<div class="rh-sub-view active" id="fin-synthese">';
+  const roi=computeROI();
+  const caFin=getKPI("Chiffre d'affaires",'n')||getFinValue("Chiffre d'affaires",'n');
+  const ebitdaFin=getKPI("EBITDA",'n')||getFinValue("EBITDA",'n');
+  const rnFin=getKPI("Résultat net",'n')||getFinValue("Résultat net",'n');
+  html+='<div class="grid g4 mb-m">';
+  html+=kpiCard("Chiffre d'affaires",caFin,'eur');
+  html+=kpiCard('EBITDA',ebitdaFin,'eur');
+  html+=kpiCard('Résultat net',rnFin,'eur','',x=>x<0?['badge-red','Déficit']:['badge-green','Positif']);
+  html+=kpiCard('ROI',roi,'pct_raw',roi!=null?'Résultat net / Actif':'Données insuffisantes');
+  html+='</div>';
+  html+='<div class="grid g2 mb-m"><div class="chart-container"><h3>Structure des charges</h3><canvas id="chartCharges"></canvas></div><div class="chart-container"><h3>Structure des recettes</h3><canvas id="chartRecettes"></canvas></div></div><div class="grid g2 mb-m"><div class="chart-container"><h3>Évolution du résultat</h3><canvas id="chartResultat"></canvas></div><div class="chart-container"><h3>Évolution CA & EBITDA</h3><canvas id="chartFinCA"></canvas></div></div></div>';
+
+  // CR sub-view
+  html+='<div class="rh-sub-view" id="fin-cdr">'+buildNormFinTable(DATA.finCR)+'</div>';
+  // Bilan sub-view
+  html+='<div class="rh-sub-view" id="fin-bilan">'+buildNormFinTable(DATA.finBilan)+'</div>';
+
+  el.innerHTML=html;
+
+  setTimeout(()=>{
+    const yrs=DATA.finAll.periodLabels;
+    const cd=chartDefaults();
+    const{charges,recettes}=extractChargesRecettes();
+
+    // Helper: sort desc, group small items into "Autres" (< 3% of total)
+    function preparePieData(items, maxSlices){
+      if(!items.length)return{labels:[],values:[],colors:[]};
+      const sorted=[...items].sort((a,b)=>b.value-a.value);
+      const total=sorted.reduce((s,i)=>s+i.value,0);
+      const threshold=total*0.03;
+      const main=[], autres={label:'Autres',value:0};
+      for(const it of sorted){
+        if(main.length<(maxSlices||8)&&it.value>=threshold)main.push(it);
+        else autres.value+=it.value;
+      }
+      if(autres.value>0)main.push(autres);
+      return{labels:main.map(i=>i.label),values:main.map(i=>i.value),colors:COLORS.slice(0,main.length)};
+    }
+
+    // Rich tooltip for pie charts: label + amount + %
+    const pieTooltip={
+      backgroundColor:'#4b4036',titleFont:{family:'Source Sans 3',size:13,weight:'600'},
+      bodyFont:{family:'Source Sans 3',size:12},cornerRadius:8,padding:14,
+      callbacks:{
+        label:function(ctx){
+          const v=ctx.parsed;const total=ctx.dataset.data.reduce((s,x)=>s+x,0);
+          const pct=total>0?((v/total)*100).toFixed(1):'0.0';
+          return` ${ctx.label} : ${fmt(v,'eur')} (${pct} %)`;
+        }
+      }
+    };
+    const pieLegend={position:'bottom',labels:{font:{family:'Source Sans 3',size:12},color:'#7a6e60',padding:12,usePointStyle:true,pointStyle:'circle',generateLabels:function(chart){
+      const ds=chart.data.datasets[0];const total=ds.data.reduce((s,x)=>s+x,0);
+      return chart.data.labels.map((l,i)=>{const pct=total>0?((ds.data[i]/total)*100).toFixed(1):'0';return{text:`${l} (${pct} %)`,fillStyle:ds.backgroundColor[i],strokeStyle:ds.backgroundColor[i],hidden:!chart.getDataVisibility(i),index:i}});
+    }}};
+
+    if(charges.length&&document.getElementById('chartCharges')){
+      const d=preparePieData(charges,8);
+      new Chart(document.getElementById('chartCharges'),{type:'doughnut',data:{labels:d.labels,datasets:[{data:d.values,backgroundColor:d.colors,borderWidth:2,borderColor:'#fff',hoverBorderWidth:3}]},options:{responsive:true,plugins:{legend:pieLegend,tooltip:pieTooltip},cutout:'55%'}});
+    }
+    if(recettes.length&&document.getElementById('chartRecettes')){
+      const d=preparePieData(recettes,6);
+      new Chart(document.getElementById('chartRecettes'),{type:'doughnut',data:{labels:d.labels,datasets:[{data:d.values,backgroundColor:['#5a8a5c','#6a9dae','#c4a87d','#b88430','#8b7350','#a0947f'].slice(0,d.labels.length),borderWidth:2,borderColor:'#fff',hoverBorderWidth:3}]},options:{responsive:true,plugins:{legend:pieLegend,tooltip:pieTooltip},cutout:'55%'}});
+    }
+
+    // Résultat net evolution
+    const rnArr=[getFinValue("Résultat net",'n2')||getKPI("Résultat net",'n2')||0,getFinValue("Résultat net",'n1')||getKPI("Résultat net",'n1')||0,getFinValue("Résultat net",'n')||getKPI("Résultat net",'n')||0];
+    if(document.getElementById('chartResultat'))new Chart(document.getElementById('chartResultat'),{type:'bar',data:{labels:yrs,datasets:[{label:'Résultat net',data:rnArr,backgroundColor:rnArr.map(v=>v>=0?'rgba(90,138,92,.6)':'rgba(176,74,74,.6)'),borderRadius:8,borderSkipped:false}]},options:{...cd,scales:scalesEur()}});
+
+    const caArr=[getKPI("Chiffre d'affaires",'n2')||getFinValue("Chiffre d'affaires",'n2')||0,getKPI("Chiffre d'affaires",'n1')||getFinValue("Chiffre d'affaires",'n1')||0,getKPI("Chiffre d'affaires",'n')||getFinValue("Chiffre d'affaires",'n')||0];
+    const ebArr=[getKPI("EBITDA",'n2')||getFinValue("EBITDA",'n2')||0,getKPI("EBITDA",'n1')||getFinValue("EBITDA",'n1')||0,getKPI("EBITDA",'n')||getFinValue("EBITDA",'n')||0];
+    if(document.getElementById('chartFinCA'))new Chart(document.getElementById('chartFinCA'),{type:'bar',data:{labels:yrs,datasets:[{label:'CA',data:caArr,backgroundColor:'rgba(196,168,125,.6)',borderRadius:8,borderSkipped:false},{label:'EBITDA',data:ebArr,backgroundColor:'rgba(75,64,54,.5)',borderRadius:8,borderSkipped:false}]},options:{...cd,scales:scalesEur()}});
+  },80);
+}
+
+function buildNormFinTable(parsed){
+  if(!parsed.rows.length)return'<p style="color:var(--text2)">Aucune donnée.</p>';
+  let html='<div class="table-wrap"><table><thead><tr><th style="width:35%"></th>';
+  parsed.periodLabels.forEach(y=>{html+=`<th>${h(y)}</th>`});
+  html+='<th>Commentaires</th></tr></thead><tbody>';
+  for(const r of parsed.rows){
+    if(r.isSection){html+=`<tr class="row-section"><td colspan="5">${h(r.label)}</td></tr>`;continue}
+    if(!r.label)continue;
+    const lo=r.label.toLowerCase();
+    const isCa=/resultat|total|solde|excedent|ebitda|ebit|marge|benefice/i.test(lo);
+    const t=resolveRowType(r);
+    html+=`<tr class="${isCa?'row-calc':''}"><td>${h(r.label)}</td>`;
+    html+=`<td class="${isCa?valCls(r.n2):''}">${fmt(r.n2,t)}</td>`;
+    html+=`<td class="${isCa?valCls(r.n1):''}">${fmt(r.n1,t)}</td>`;
+    html+=`<td class="${isCa?valCls(r.n):''}">${fmt(r.n,t)}</td>`;
+    html+=`<td style="text-align:left;font-size:12px;color:var(--text3)">${h(r.comment)}</td></tr>`;
+  }
+  html+='</tbody></table></div>';
+  return html;
+}
+
+/* ═══════════════════════════════════════
+   ACTIVITÉ
+   ═══════════════════════════════════════ */
+function renderActivite(){
+  const el=document.getElementById('view-activite');
+  const parsed=DATA.actParsed;
+  if(!parsed.rows.length){el.innerHTML='<p style="color:var(--text2)">Aucune donnée.</p>';return}
+  const ca=getKPI("Chiffre d'affaires",'n');
+  let html=`<div class="section"><div class="section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Activité Commerciale</div></div>`;
+  html+='<div class="grid g3 mb-m">';
+  if(ca!=null)html+=kpiCard("Chiffre d'affaires",ca,'eur');
+  const pm=computePanierMoyen();
+  if(pm.value!=null){
+    html+=kpiCard('Panier moyen',pm.value,'eur',pm.source==='brut'?'':'');
+  }else{
+    html+=`<div class="card"><div class="card-title">Panier moyen</div><div class="card-value" style="font-size:16px;color:var(--text3)">Non calculable</div><div class="card-sub">Données insuffisantes</div></div>`;
+  }
+  // Find clients count
+  for(const r of parsed.rows){
+    if(!r.isSection&&/nombre.*clients|clients.*actifs|nb.*clients/i.test(r.label)){
+      const nc=safeNum(r.n);
+      if(nc!=null){html+=kpiCard('Clients',nc,'int');break}
+    }
+  }
+  html+='</div>';
+
+  // Table
+  html+='<div class="table-wrap"><table><thead><tr><th style="width:35%"></th>';
+  parsed.periodLabels.forEach(y=>{html+=`<th>${h(y)}</th>`});
+  html+='<th>Commentaires</th></tr></thead><tbody>';
+  let lastCat='';
+  for(const r of parsed.rows){
+    if(r.isSection){html+=`<tr class="row-section"><td colspan="5">${h(r.label)}</td></tr>`;continue}
+    if(!r.label)continue;
+    if(r.category&&r.category!==lastCat){
+      html+=`<tr class="row-section"><td colspan="5">${h(r.category)}</td></tr>`;
+      lastCat=r.category;
+    }
+    const isCa=/total|sous.total|marge/i.test(r.label.toLowerCase());
+    const t=resolveRowType(r);
+    html+=`<tr class="${isCa?'row-calc':''}"><td>${h(r.label)}</td>`;
+    html+=`<td>${fmt(r.n2,t)}</td><td>${fmt(r.n1,t)}</td><td>${fmt(r.n,t)}</td>`;
+    html+=`<td style="text-align:left;font-size:12px;color:var(--text3)">${h(r.comment)}</td></tr>`;
+  }
+  html+='</tbody></table></div>';
+  el.innerHTML=html;
+}
+
+/* ═══════════════════════════════════════
+   RH
+   ═══════════════════════════════════════ */
+function renderRH(){
+  const el=document.getElementById('view-rh');
+  const parsed=DATA.rhParsed;
+  if(!parsed.rows.length&&!DATA.rhEffectifs.length){el.innerHTML='<p style="color:var(--text2)">Aucune donnée RH.</p>';return}
+  let html=`<div class="section"><div class="section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Ressources Humaines</div></div>`;
+  html+=`<div class="sub-nav"><button class="sub-nav-btn active" onclick="switchSubTab('rh-overview',this)">Vue globale</button><button class="sub-nav-btn" onclick="switchSubTab('rh-effectif',this)">Effectif & Fiches</button></div>`;
+
+  // Overview table
+  html+='<div class="rh-sub-view active" id="rh-overview"><div class="table-wrap"><table><thead><tr><th style="width:35%"></th>';
+  parsed.periodLabels.forEach(y=>{html+=`<th>${h(y)}</th>`});
+  html+='<th>Commentaires</th></tr></thead><tbody>';
+  let lastCat='';
+  for(const r of parsed.rows){
+    if(r.isSection){html+=`<tr class="row-section"><td colspan="5">${h(r.label)}</td></tr>`;continue}
+    if(!r.label)continue;
+    if(r.category&&r.category!==lastCat){
+      html+=`<tr class="row-section"><td colspan="5">${h(r.category)}</td></tr>`;
+      lastCat=r.category;
+    }
+    const isCa=/total|sous.total/i.test(r.label.toLowerCase());
+    const t=resolveRowType(r);
+    html+=`<tr class="${isCa?'row-calc':''}"><td>${h(r.label)}</td>`;
+    html+=`<td>${fmt(r.n2,t)}</td><td>${fmt(r.n1,t)}</td><td>${fmt(r.n,t)}</td>`;
+    html+=`<td style="text-align:left;font-size:12px;color:var(--text3)">${h(r.comment)}</td></tr>`;
+  }
+  html+='</tbody></table></div></div>';
+
+  // Effectif section
+  html+='<div class="rh-sub-view" id="rh-effectif">'+buildEmployeeSection()+'</div>';
+  el.innerHTML=html;
+}
+
+function buildEmployeeSection(){
+  const eff=DATA.client['Effectif actuel']||'—';
+  let html=`<div class="employee-header"><div class="employee-count">${fmt(eff,'int')}<span>collaborateurs</span></div><input class="employee-search" type="text" placeholder="Rechercher…" oninput="filterEmployees(this.value)"></div>`;
+
+  // Parse RH_Effectifs sheet
+  const raw=DATA.rhEffectifs;
+  let emps=[];
+  if(raw.length>1){
+    const{headerRow,map:hm}=detectHeaders(raw);
+    if(headerRow>=0){
+      const hds=raw[headerRow].map(x=>String(x||'').trim().toLowerCase());
+      for(let i=headerRow+1;i<raw.length;i++){
+        const row=raw[i];
+        if(!row||!row[0]||String(row[0]).trim()==='')continue;
+        const emp={};
+        hds.forEach((hd,ci)=>{if(hd)emp[hd]=row[ci]||''});
+        emps.push(emp);
+      }
+    }
+  }
+
+  function eg(e,ks){for(const k of ks){for(const[ek,ev] of Object.entries(e)){if(ek.toLowerCase().includes(k.toLowerCase())&&ev!=='')return ev}}return''}
+
+  if(emps.length>0){
+    html+='<div class="employee-grid" id="employeeGrid">';
+    emps.forEach((e,i)=>{
+      const nm=eg(e,['nom','salarié','employé','collaborat'])||`Employé ${i+1}`;
+      const pn=eg(e,['prénom','prenom']);
+      const fn=pn?`${pn} ${nm}`:nm;
+      const po=eg(e,['poste','fonction','métier','role']);
+      const sv=eg(e,['service','département','direction']);
+      const ct=eg(e,['contrat','type de contrat']);
+      const tp=eg(e,['temps','plein','partiel']);
+      const en=eg(e,['entrée','entree','embauche']);
+      const an=eg(e,['ancienneté','anciennete']);
+      const rm=eg(e,['rémunération','remuneration','salaire','brut']);
+      const st=eg(e,['site','établissement']);
+      const su=eg(e,['statut','cadre']);
+      const mg=eg(e,['manager','responsable','n+1']);
+      const co=eg(e,['commentaire','note','observation']);
+      html+=`<div class="emp-card" data-name="${h(fn).toLowerCase()}"><div class="emp-avatar">${initials(fn)}</div><div class="emp-info"><div class="emp-name">${h(fn)}</div>${po?`<div class="emp-role">${h(po)}</div>`:''}<div class="emp-detail">${sv?`<div><strong>Service :</strong> ${h(sv)}</div>`:''}${ct?`<div><strong>Contrat :</strong> ${h(ct)}</div>`:''}${tp?`<div><strong>Temps :</strong> ${h(tp)}</div>`:''}${en?`<div><strong>Entrée :</strong> ${h(en)}</div>`:''}${an?`<div><strong>Ancienneté :</strong> ${h(an)}</div>`:''}${rm?`<div><strong>Rémunération :</strong> ${fmt(rm,'eur')}</div>`:''}${st?`<div><strong>Site :</strong> ${h(st)}</div>`:''}${su?`<div><strong>Statut :</strong> ${h(su)}</div>`:''}${mg?`<div><strong>Manager :</strong> ${h(mg)}</div>`:''}${co?`<div><strong>Note :</strong> ${h(co)}</div>`:''}</div></div></div>`;
+    });
+    html+='</div>';
+  }else{
+    // Fallback: show RH global summary
+    html+=`<div class="synth-box"><h3>Synthèse RH</h3><div class="synth-item"><strong>Effectif :</strong> ${h(eff)}</div>`;
+    for(const r of DATA.rhParsed.rows){
+      if(r.isSection||!r.label)continue;
+      const vl=safeNum(r.n);
+      if(vl!=null)html+=`<div class="synth-item"><strong>${h(r.label)} :</strong> ${fmt(vl,resolveRowType(r))}</div>`;
+    }
+    html+='</div><div style="text-align:center;padding:40px 20px;color:var(--text3)"><p style="font-size:14px">Aucune donnée individuelle détectée</p><p style="font-size:12px">Ajoutez des lignes employé dans l\'onglet RH_Effectifs.</p></div>';
+  }
+  return html;
+}
+
+function filterEmployees(q){const g=document.getElementById('employeeGrid');if(!g)return;g.querySelectorAll('.emp-card').forEach(c=>{c.style.display=c.dataset.name.includes(q.toLowerCase())?'':'none'})}
+
+
+/* ═══════════════════════════════════════
+   AUDIT SECTORIEL (avec carte Leaflet)
+   ═══════════════════════════════════════ */
+function renderMarche(){const el=document.getElementById('view-marche');const m=DATA.marche,c=DATA.client;let html=`<div class="section"><div class="section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>Audit Sectoriel</div></div>`;html+='<div class="grid g3 mb-m">';if(c['Secteur'])html+=`<div class="card"><div class="card-title">Secteur</div><div class="card-value" style="font-size:18px">${h(c['Secteur'])}</div></div>`;if(c['Ville / Code postal'])html+=`<div class="card"><div class="card-title">Localisation</div><div class="card-value" style="font-size:18px">${h(c['Ville / Code postal'])}</div></div>`;if(c['Effectif actuel'])html+=`<div class="card"><div class="card-title">Effectif</div><div class="card-value">${fmt(c['Effectif actuel'],'int')}</div></div>`;if(m['Positionnement prix'])html+=`<div class="card"><div class="card-title">Positionnement prix</div><div class="card-value" style="font-size:16px">${h(m['Positionnement prix'])}</div></div>`;if(m['Tendance de marché 3 ans'])html+=`<div class="card"><div class="card-title">Tendance marché</div><div class="card-value" style="font-size:16px">${h(m['Tendance de marché 3 ans'])}</div></div>`;if(m['Typologie clientèle cible'])html+=`<div class="card"><div class="card-title">Clientèle cible</div><div class="card-value" style="font-size:16px">${h(m['Typologie clientèle cible'])}</div></div>`;html+='</div>';const hasD=m['Positionnement prix']||m['Tendance de marché 3 ans']||m['Zone primaire']||m['Opportunités de zone'];if(hasD){html+=`<div class="synth-box mb-m"><h3>Synthèse — Audit sectoriel & Zone</h3>`;['Tendance de marché 3 ans','Positionnement prix','Positionnement qualité','Typologie clientèle cible','Zone primaire','Opportunités de zone','Risques de zone'].forEach(k=>{if(m[k])html+=`<div class="synth-item"><strong>${k} :</strong> ${h(m[k])}</div>`});html+='</div>'}if(m['Opportunités de zone']||m['Risques de zone']){html+='<div class="grid g2 mb-m">';if(m['Opportunités de zone'])html+=`<div class="strat-card" style="border-top-color:var(--green)"><h4>Opportunités</h4><p>${h(m['Opportunités de zone'])}</p></div>`;if(m['Risques de zone'])html+=`<div class="strat-card" style="border-top-color:var(--red)"><h4>Risques</h4><p>${h(m['Risques de zone'])}</p></div>`;html+='</div>'}html+=`<div class="divider"></div><div class="sub-nav mb-m"><button class="sub-nav-btn" onclick="switchSubTab('marche-sector',this)">Analyse sectorielle</button><button class="sub-nav-btn" onclick="switchSubTab('marche-zone',this,{onSwitch:activateMap})">Zone de chalandise</button></div>`;html+='<div class="rh-sub-view" id="marche-sector"><div class="strat-grid mb-m">';[{t:'Positionnement prix',k:'Positionnement prix',i:'€'},{t:'Positionnement qualité',k:'Positionnement qualité',i:'★'},{t:'Tendance marché',k:'Tendance de marché 3 ans',i:'↗'},{t:'Saisonnalité',k:'Saisonnalité',i:'◐'},{t:'Clientèle cible',k:'Typologie clientèle cible',i:'◉'},{t:'Ticket / budget client',k:'Ticket / budget client',i:'▣'}].forEach(b=>{html+=`<div class="strat-card"><h4><span style="color:var(--camel);margin-right:4px">${b.i}</span> ${b.t}</h4><p>${h(m[b.k])||'—'}</p></div>`});html+='</div>';html+=`<div class="audit-block mb-m"><h4>Concurrents principaux</h4><p>${h(m['3 concurrents principaux'])||'—'}</p></div>`;html+=`<div class="audit-block mb-m"><h4>Prix marché observé</h4><p>${h(m['Prix marché observé'])||'—'}</p></div>`;html+='<div class="grid g2 mb-m">';html+=`<div class="audit-block"><h4>Facteurs macroéconomiques</h4><p>${h(m['Facteurs macro clés'])||'—'}</p></div>`;html+=`<div class="audit-block"><h4>Facteurs micro-locaux</h4><p>${h(m['Facteurs micro locaux'])||'—'}</p></div>`;html+='</div></div>';html+='<div class="rh-sub-view" id="marche-zone"><div class="map-wrap mb-m"><div id="mapContainer"></div></div><div class="map-legend mb-m" style="justify-content:center"><div class="map-legend-item"><div class="map-legend-dot" style="background:#8b7350"></div>Zone primaire</div><div class="map-legend-item"><div class="map-legend-dot" style="background:#c4a87d"></div>Zone secondaire</div><div class="map-legend-item"><div class="map-legend-dot" style="background:#a0947f"></div>Zone tertiaire</div></div><div class="strat-grid">';[['Zone primaire','Zone primaire'],['Zone secondaire','Zone secondaire'],['Zone tertiaire','Zone tertiaire'],["Rayon / temps d'accès",'Rayon estimé / temps accès']].forEach(([t,k])=>{html+=`<div class="strat-card"><h4>${t}</h4><p>${h(m[k])||'—'}</p></div>`});html+='</div></div>';el.innerHTML=html}
+function activateMap(){const mc=document.getElementById('mapContainer');if(mc&&!mc._leaflet_id)setTimeout(()=>initMap('mapContainer'),100);else if(DATA._map)setTimeout(()=>DATA._map.invalidateSize(),100)}
+
+/* ═══════════════════════════════════════
+   AUDIT INTERNE
+   ═══════════════════════════════════════ */
+function renderQualitatif(){const el=document.getElementById('view-qualitatif');const q=DATA.qual;let html=`<div class="section"><div class="section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>Audit Interne</div><div class="section-sub">Diagnostic stratégique et opérationnel</div></div>`;html+=`<div class="section"><h3 style="font-family:var(--font-display);font-size:17px;margin-bottom:16px;color:var(--text)">Analyse SWOT</h3><div class="swot"><div class="swot-box swot-s"><h4><span>✦</span> Forces</h4><p>${h(q['Forces'])||'—'}</p></div><div class="swot-box swot-w"><h4><span>✦</span> Faiblesses</h4><p>${h(q['Faiblesses'])||'—'}</p></div><div class="swot-box swot-o"><h4><span>✦</span> Opportunités</h4><p>${h(q['Opportunités'])||'—'}</p></div><div class="swot-box swot-t"><h4><span>✦</span> Menaces</h4><p>${h(q['Menaces'])||'—'}</p></div></div></div>`;
+  // Diagnostic opérationnel (all Audit_Interne fields)
+  html+=`<div class="divider"></div><h3 style="font-family:var(--font-display);font-size:17px;margin-bottom:20px;color:var(--text)">Diagnostic opérationnel</h3><div class="grid g2">`;
+  [['Proposition de valeur','Proposition de valeur'],['Produits & services','Produits / services principaux'],['Process & organisation','Process et organisation'],['Outils & SI','Outils et SI'],['Qualité de pilotage','Qualité de pilotage'],['Dépendances critiques','Dépendances critiques'],['Points de vigilance','Points de vigilance']].forEach(([t,key])=>{const val=q[key];if(val)html+=`<div class="audit-block audit-highlight"><h4>${h(t)}</h4><p>${h(val)}</p></div>`});
+  html+='</div>';
+  // Stratégie & Recommandations
+  html+=`<div class="divider"></div><h3 style="font-family:var(--font-display);font-size:17px;margin-bottom:20px;color:var(--text)">Stratégie & Recommandations</h3><div class="grid g2">`;
+  [['Hypothèses du dirigeant','Hypothèses du dirigeant'],['Risques identifiés','Risques identifiés'],['Priorités 12 mois','Priorités 12 mois'],['Besoins spécifiques','Besoins spécifiques'],['Recommandations','Recommandations brèves'],['Commentaires analyste','Commentaires analyste']].forEach(([t,key])=>{const val=q[key];if(val)html+=`<div class="audit-block audit-highlight"><h4>${h(t)}</h4><p>${h(val)}</p></div>`});
+  html+='</div>';
+  // KPI Sectoriels
+  if(DATA.kpiSectoriels.length>1){
+    html+=`<div class="divider"></div><div class="section"><div class="section-title">KPI Sectoriels — Benchmark</div></div>`;
+    const ks=DATA.kpiSectoriels;const hdr=ks[0];
+    html+='<div class="table-wrap"><table><thead><tr>';
+    hdr.forEach(c=>{html+=`<th>${h(c)}</th>`});
+    html+='</tr></thead><tbody>';
+    for(let i=1;i<ks.length;i++){const r=ks[i];if(!r||!r[0]||String(r[0]).trim()==='')continue;html+='<tr>';r.forEach((c,ci)=>{html+=`<td${ci===0?' style="text-align:left;font-weight:600"':''}>${h(c)}</td>`});html+='</tr>'}
+    html+='</tbody></table></div>';
+  }
+  // Documents
+  if(DATA.documents.length>1){
+    html+=`<div class="divider"></div><div class="section"><div class="section-title">Suivi documentaire</div></div>`;
+    const ds=DATA.documents;const hdr=ds[0];
+    html+='<div class="table-wrap"><table><thead><tr>';
+    hdr.forEach(c=>{html+=`<th>${h(c)}</th>`});
+    html+='</tr></thead><tbody>';
+    for(let i=1;i<ds.length;i++){const r=ds[i];if(!r||!r[0]||String(r[0]).trim()==='')continue;html+='<tr>';r.forEach((c,ci)=>{html+=`<td${ci===0?' style="text-align:left;font-weight:600"':''}>${h(c)}</td>`});html+='</tr>'}
+    html+='</tbody></table></div>';
+  }
+  el.innerHTML=html}
+
+/* ═══════════════════════════════════════
+   RAPPORT CONSOLIDÉ
+   ═══════════════════════════════════════ */
+function renderRapport(){
+  const el=document.getElementById('view-rapport');
+  const cl=DATA.client,q=DATA.qual,m=DATA.marche;
+  const roi=computeROI();
+  const date=new Date().toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});
+
+  const caN=getKPI("Chiffre d'affaires",'n');
+  const varCA=getKPI("Variation CA",'n');
+  const ebitdaN=getKPI("EBITDA",'n');
+  const margEBITDA=getKPI("Marge EBITDA",'n');
+  const rnN=getKPI("Résultat net",'n');
+  const margNette=getKPI("Marge nette",'n');
+  const cr=getKPI("Current Ratio",'n');
+  const dnEbitda=getKPI("Dette nette / EBITDA",'n');
+  const caEtp=getKPI("CA / ETP",'n');
+  const turnover=getKPI("Turnover RH",'n')||getKPI("Turnover",'n');
+  const partTop5=getKPI("Part top 5 clients",'n');
+
+  let html='<div id="rapportContent">';
+  html+=`<div class="rapport-header"><h2>Rapport d'analyse — ${h(DATA.clientName)}</h2><p>${h(cl['Secteur']||'')} · ${h(cl['Ville / Code postal']||'')} · ${date}</p></div>`;
+
+  // ① Résumé exécutif
+  html+=`<div class="rpt-section"><div class="rpt-section-title">① Résumé exécutif</div><div class="rapport-exec"><p style="font-size:13px;line-height:1.7;color:var(--text)">${h(cl['Synthèse du besoin']||cl['Objectif de la mission']||'Non renseigné')}</p></div>`;
+  const cst=getKPISynthese('Constats clés'),act90=getKPISynthese('Actions 90 jours');
+  if(cst)html+=`<div class="rpt-text"><strong>Constats clés :</strong> ${h(cst)}</div>`;
+  if(act90)html+=`<div class="rpt-text"><strong>Actions prioritaires 90 jours :</strong> ${h(act90)}</div>`;
+  html+=`</div>`;
+
+  // ② Indicateurs clés
+  html+=`<div class="rpt-section"><div class="rpt-section-title">② Indicateurs clés</div><div class="rpt-kpi-grid">`;
+  [{l:"CA",v:caN,t:'eur'},{l:'EBITDA',v:ebitdaN,t:'eur'},{l:'Résultat net',v:rnN,t:'eur'},{l:'Marge nette',v:margNette,t:'pct'},{l:'ROI',v:roi,t:'pct_raw'},{l:'Current Ratio',v:cr,t:'x'}].forEach(kp=>{
+    html+=`<div class="rpt-kpi"><div class="rpt-kpi-label">${kp.l}</div><div class="rpt-kpi-value">${fmt(kp.v,kp.t)}</div></div>`;
+  });
+  html+=`</div></div>`;
+
+  // ③ Synthèse financière
+  html+=`<div class="rpt-section"><div class="rpt-section-title">③ Synthèse financière</div>`;
+  const{charges}=extractChargesRecettes();
+  if(caN!=null)html+=`<div class="rpt-text"><strong>CA N :</strong> ${fmt(caN,'eur')}${varCA!=null?' ('+fmt(varCA,'pct')+' vs N-1)':''}</div>`;
+  if(ebitdaN!=null)html+=`<div class="rpt-text"><strong>EBITDA N :</strong> ${fmt(ebitdaN,'eur')}${margEBITDA!=null?' — marge '+fmt(margEBITDA,'pct'):''}</div>`;
+  if(rnN!=null)html+=`<div class="rpt-text"><strong>Résultat net N :</strong> ${fmt(rnN,'eur')}${margNette!=null?' — marge nette '+fmt(margNette,'pct'):''}</div>`;
+  if(roi!=null)html+=`<div class="rpt-text"><strong>ROI :</strong> ${fmt(roi,'pct_raw')}</div>`;
+  if(dnEbitda!=null)html+=`<div class="rpt-text"><strong>Dette nette / EBITDA :</strong> ${fmt(dnEbitda,'x')}</div>`;
+  if(charges.length)html+=`<div class="rpt-text"><strong>Top charges :</strong> ${charges.sort((a,b)=>b.value-a.value).slice(0,4).map(ch=>`${ch.label} (${fmt(ch.value,'eur')})`).join(', ')}</div>`;
+  html+=`</div>`;
+
+  // ④ Synthèse activité
+  html+=`<div class="rpt-section"><div class="rpt-section-title">④ Synthèse activité</div>`;
+  const pmRpt=computePanierMoyen();
+  if(pmRpt.value!=null)html+=`<div class="rpt-text"><strong>Panier moyen :</strong> ${fmt(pmRpt.value,'eur')} (${pmRpt.source==='brut'?'donnée importée':'calculé'})</div>`;
+  for(const r of DATA.actParsed.rows){
+    if(r.isSection||!r.label)continue;
+    if(/nombre.*clients|clients.*actifs|recurrence|fidel/i.test(r.label)){
+      const vl=safeNum(r.n);
+      if(vl!==null)html+=`<div class="rpt-text"><strong>${h(r.label)} :</strong> ${fmt(vl,resolveRowType(r))}</div>`;
+    }
+  }
+  if(partTop5!=null)html+=`<div class="rpt-text"><strong>Part top 5 clients :</strong> ${fmt(partTop5,'pct')}</div>`;
+  html+=`</div>`;
+
+  // ⑤ Synthèse RH
+  if(DATA.rhParsed.rows.length>0){
+    html+=`<div class="rpt-section"><div class="rpt-section-title">⑤ Synthèse RH</div>`;
+    if(cl['Effectif actuel'])html+=`<div class="rpt-text"><strong>Effectif :</strong> ${fmt(cl['Effectif actuel'],'int')}</div>`;
+    if(caEtp!=null)html+=`<div class="rpt-text"><strong>CA / ETP :</strong> ${fmt(caEtp,'eur')}</div>`;
+    if(turnover!=null)html+=`<div class="rpt-text"><strong>Turnover :</strong> ${fmt(turnover,'pct')}</div>`;
+    for(const r of DATA.rhParsed.rows){
+      if(r.isSection||!r.label)continue;
+      if(/masse salariale|cout.*personnel|charge.*personnel/i.test(r.label)){
+        const vl=safeNum(r.n);
+        if(vl!=null)html+=`<div class="rpt-text"><strong>${h(r.label)} :</strong> ${fmt(vl,'eur')}</div>`;
+      }
+    }
+    html+=`</div>`;
+  }
+
+  // ⑥ Synthèse marché
+  if(Object.keys(m).length>0){
+    html+=`<div class="rpt-section"><div class="rpt-section-title">⑥ Synthèse marché & zone</div>`;
+    ['Tendance de marché 3 ans','Positionnement prix','Positionnement qualité','Typologie clientèle cible','3 concurrents principaux','Zone primaire','Opportunités de zone','Risques de zone'].forEach(key=>{if(m[key])html+=`<div class="rpt-text"><strong>${key} :</strong> ${h(m[key])}</div>`});
+    html+=`</div>`;
+  }
+
+  // ⑦ SWOT
+  if(q['Forces']||q['Faiblesses']||q['Opportunités']||q['Menaces'])html+=`<div class="rpt-section"><div class="rpt-section-title">⑦ Diagnostic interne — SWOT</div><div class="rpt-two-col"><div class="rpt-box" style="border-left:3px solid var(--green)"><h5>Forces</h5><p>${h(q['Forces'])||'—'}</p></div><div class="rpt-box" style="border-left:3px solid var(--red)"><h5>Faiblesses</h5><p>${h(q['Faiblesses'])||'—'}</p></div><div class="rpt-box" style="border-left:3px solid #6a9dae"><h5>Opportunités</h5><p>${h(q['Opportunités'])||'—'}</p></div><div class="rpt-box" style="border-left:3px solid var(--orange)"><h5>Menaces</h5><p>${h(q['Menaces'])||'—'}</p></div></div></div>`;
+
+  // ⑧ Risques & Recommandations
+  html+=`<div class="rpt-section"><div class="rpt-section-title">⑧ Risques & Recommandations</div>`;
+  [['Risques identifiés',q['Risques identifiés']],['Risques',getKPISynthese('Risques')],['Points faibles',getKPISynthese('Points faibles')]].forEach(([l,val])=>{if(val)html+=`<div class="rpt-text"><strong>${l} :</strong> ${h(val)}</div>`});
+  [['Priorités 12 mois',q['Priorités 12 mois']],['Actions 90 jours',getKPISynthese('Actions 90 jours')],['Besoins spécifiques',q['Besoins spécifiques']]].forEach(([l,val])=>{if(val)html+=`<div class="rpt-text"><strong>${l} :</strong> ${h(val)}</div>`});
+  html+=`</div>`;
+
+  // ⑨ Fiche entreprise
+  html+=`<div class="rpt-section"><div class="rpt-section-title">⑨ Fiche entreprise</div><dl class="info-grid" style="font-size:12px">`;
+  ['Raison sociale','Forme juridique','Secteur','Adresse principale','Ville / Code postal','Date de création','Effectif actuel'].forEach(fld=>{html+=`<dt>${h(fld)}</dt><dd>${h(cl[fld])||'—'}</dd>`});
+  html+=`</dl></div>`;
+
+  html+=`<div style="margin-top:24px;text-align:center;color:var(--text3);font-size:10px;letter-spacing:.5px">Rapport généré le ${date} — Confidentiel</div></div>`;
+  html+=`<div style="text-align:center;margin-top:32px"><button class="dl-btn" id="dlBtn" onclick="exportPDF()">${DL_SVG}Télécharger le rapport PDF</button><p style="margin-top:8px;font-size:11px;color:var(--text3)"></p></div>`;
+  el.innerHTML=html;
+}
+
+/* ═══════════════════════════════════════
+   EXPORT PDF (jsPDF — rapport structuré)
+   ═══════════════════════════════════════ */
+let _pdfExporting=false;
+async function exportPDF(){
+  if(_pdfExporting)return;
+  const btn=document.getElementById('dlBtn');
+  if(!btn)return;
+  _pdfExporting=true;
+  btn.disabled=true;btn.textContent='Generation en cours...';
+
+  try{
+    if(!window.jspdf||!window.jspdf.jsPDF)throw new Error('jsPDF non charge.');
+    const{jsPDF}=window.jspdf;
+    const doc=new jsPDF({unit:'mm',format:'a4',orientation:'portrait'});
+    const W=210,H=297,ML=20,MR=20,MT=25,MB=25;
+    const PW=W-ML-MR;
+    let y=MT;
+    const cl=DATA.client,q=DATA.qual,m=DATA.marche;
+    const date=new Date().toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});
+
+    // Sanitize: replace chars outside Latin-1 that Helvetica can't render
+    function san(s){
+      if(!s)return'';
+      return String(s)
+        .replace(/[\u2018\u2019\u201A]/g,"'").replace(/[\u201C\u201D\u201E]/g,'"')
+        .replace(/\u2026/g,'...').replace(/[\u2013\u2014]/g,'-').replace(/\u00A0/g,' ')
+        .replace(/[\u2460-\u2473]/g,'').replace(/[^\x00-\xFF]/g,' ').trim();
+    }
+
+    function checkPage(need){if(y+need>H-MB){doc.addPage();y=MT}}
+    function drawFooter(pg,total){
+      doc.setFontSize(8);doc.setFont('helvetica','normal');doc.setTextColor(160,160,160);
+      doc.text('Confidentiel - '+san(DATA.clientName),W/2,H-12,{align:'center'});
+      doc.text(pg+' / '+total,W-MR,H-12,{align:'right'});
+    }
+    function sectionTitle(num,title){
+      checkPage(18);
+      doc.setFontSize(13);doc.setFont('helvetica','bold');doc.setTextColor(75,64,54);
+      doc.text(num+'. '+san(title),ML,y);
+      y+=2;doc.setDrawColor(196,168,125);doc.setLineWidth(0.5);doc.line(ML,y,ML+PW,y);y+=8;
+    }
+    function bodyText(label,value){
+      if(value==null||value===''||value===undefined)return;
+      const lbl=san(label)+' : ';const val=san(String(value));
+      checkPage(8);
+      doc.setFontSize(10);doc.setFont('helvetica','bold');doc.setTextColor(75,64,54);
+      const lw=doc.getTextWidth(lbl);
+      doc.text(lbl,ML,y);
+      doc.setFont('helvetica','normal');doc.setTextColor(100,90,78);
+      const maxW=Math.max(PW-lw,60);
+      const lines=doc.splitTextToSize(val,maxW);
+      if(lines.length<=1){doc.text(lines[0]||'',ML+lw,y);y+=6}
+      else{doc.text(lines[0],ML+lw,y);y+=5;for(let i=1;i<lines.length;i++){checkPage(5);doc.text(lines[i],ML+4,y);y+=5}y+=1}
+    }
+    function kpiBlock(items){
+      checkPage(18);
+      const perRow=Math.min(items.length,4);
+      let idx=0;
+      while(idx<items.length){
+        const row=items.slice(idx,idx+perRow);const cw=PW/row.length;
+        row.forEach((kp,i)=>{
+          const cx=ML+i*cw+cw/2;
+          doc.setFillColor(245,239,230);doc.roundedRect(ML+i*cw+2,y,cw-4,14,2,2,'F');
+          doc.setFontSize(7);doc.setFont('helvetica','normal');doc.setTextColor(140,140,140);
+          doc.text(san(kp.l),cx,y+5,{align:'center'});
+          doc.setFontSize(11);doc.setFont('helvetica','bold');doc.setTextColor(75,64,54);
+          doc.text(san(kp.v),cx,y+11,{align:'center'});
+        });
+        y+=18;idx+=perRow;if(idx<items.length)checkPage(18);
+      }
+      y+=2;
+    }
+
+    // ─── PAGE DE GARDE ───
+    doc.setFillColor(75,64,54);doc.rect(0,0,W,H,'F');
+    doc.setFontSize(32);doc.setFont('helvetica','bold');doc.setTextColor(255,255,255);
+    doc.text(san("Rapport d'analyse"),W/2,100,{align:'center'});
+    doc.setFontSize(20);doc.setFont('helvetica','normal');doc.setTextColor(196,168,125);
+    doc.text(san(DATA.clientName),W/2,118,{align:'center'});
+    doc.setFontSize(12);doc.setTextColor(200,200,200);
+    const subLine=[cl['Secteur'],cl['Ville / Code postal']].filter(Boolean).join(' - ');
+    if(subLine)doc.text(san(subLine),W/2,132,{align:'center'});
+    doc.text(san(date),W/2,144,{align:'center'});
+    doc.setFontSize(9);doc.setTextColor(160,160,160);
+    doc.text('Confidentiel',W/2,H-30,{align:'center'});
+
+    // ─── CONTENT PAGES ───
+    doc.addPage();y=MT;
+
+    sectionTitle('1','Resume executif');
+    const synthBesoins=cl['Synthèse du besoin']||cl['Objectif de la mission']||'';
+    if(synthBesoins){
+      doc.setFontSize(10);doc.setFont('helvetica','normal');doc.setTextColor(100,90,78);
+      const lines=doc.splitTextToSize(san(synthBesoins),PW);
+      lines.forEach(l=>{checkPage(5);doc.text(l,ML,y);y+=5});y+=4;
+    }
+    bodyText('Constats cles',getKPISynthese('Constats clés'));
+    bodyText('Actions prioritaires 90 jours',getKPISynthese('Actions 90 jours'));
+    y+=6;
+
+    const caN=getKPI("Chiffre d'affaires",'n');const varCA=getKPI("Variation CA",'n');
+    const ebitdaN=getKPI("EBITDA",'n');const margEBITDA=getKPI("Marge EBITDA",'n');
+    const rnN=getKPI("Résultat net",'n');const margNette=getKPI("Marge nette",'n');
+    const cr=getKPI("Current Ratio",'n');const dnEbitda=getKPI("Dette nette / EBITDA",'n');
+    const roi=computeROI();
+
+    sectionTitle('2','Indicateurs cles');
+    kpiBlock([
+      {l:'CA',v:fmt(caN,'eur')},{l:'EBITDA',v:fmt(ebitdaN,'eur')},
+      {l:'Resultat net',v:fmt(rnN,'eur')},{l:'Marge nette',v:fmt(margNette,'pct')},
+      {l:'ROI',v:fmt(roi,'pct_raw')},{l:'Current Ratio',v:fmt(cr,'x')}
+    ]);
+
+    sectionTitle('3','Synthese financiere');
+    bodyText('CA N',caN!=null?(fmt(caN,'eur')+(varCA!=null?' ('+fmt(varCA,'pct')+' vs N-1)':'')):null);
+    bodyText('EBITDA N',ebitdaN!=null?(fmt(ebitdaN,'eur')+(margEBITDA!=null?' - marge '+fmt(margEBITDA,'pct'):'')):null);
+    bodyText('Resultat net N',rnN!=null?(fmt(rnN,'eur')+(margNette!=null?' - marge nette '+fmt(margNette,'pct'):'')):null);
+    bodyText('ROI',roi!=null?fmt(roi,'pct_raw'):null);
+    bodyText('Dette nette / EBITDA',dnEbitda!=null?fmt(dnEbitda,'x'):null);
+    const{charges}=extractChargesRecettes();
+    if(charges.length){
+      const topCh=[...charges].sort((a,b)=>b.value-a.value).slice(0,4).map(c=>san(c.label)+' ('+fmt(c.value,'eur')+')').join(', ');
+      bodyText('Top charges',topCh);
+    }
+    y+=6;
+
+    sectionTitle('4','Synthese activite');
+    const pmPdf=computePanierMoyen();
+    if(pmPdf.value!=null)bodyText('Panier moyen',fmt(pmPdf.value,'eur')+' ('+pmPdf.source+')');
+    for(const r of DATA.actParsed.rows){
+      if(r.isSection||!r.label)continue;
+      if(/nombre.*clients|clients.*actifs|recurrence|fidel/i.test(r.label)){
+        const vl=safeNum(r.n);if(vl!==null)bodyText(r.label,fmt(vl,resolveRowType(r)));
+      }
+    }
+    const partTop5=getKPI("Part top 5 clients",'n');
+    if(partTop5!=null)bodyText('Part top 5 clients',fmt(partTop5,'pct'));
+    y+=6;
+
+    if(DATA.rhParsed.rows.length>0){
+      sectionTitle('5','Synthese RH');
+      if(cl['Effectif actuel'])bodyText('Effectif',fmt(cl['Effectif actuel'],'int'));
+      const caEtp=getKPI("CA / ETP",'n');const turnover=getKPI("Turnover RH",'n')||getKPI("Turnover",'n');
+      if(caEtp!=null)bodyText('CA / ETP',fmt(caEtp,'eur'));
+      if(turnover!=null)bodyText('Turnover',fmt(turnover,'pct'));
+      for(const r of DATA.rhParsed.rows){
+        if(r.isSection||!r.label)continue;
+        if(/masse salariale|cout.*personnel|charge.*personnel/i.test(r.label)){const vl=safeNum(r.n);if(vl!=null)bodyText(r.label,fmt(vl,'eur'))}
+      }
+      y+=6;
+    }
+
+    if(Object.keys(m).length>0){
+      sectionTitle('6','Synthese marche et zone');
+      ['Tendance de marché 3 ans','Positionnement prix','Positionnement qualité','Typologie clientèle cible','3 concurrents principaux','Zone primaire','Opportunités de zone','Risques de zone'].forEach(key=>{bodyText(key,m[key])});
+      y+=6;
+    }
+
+    if(q['Forces']||q['Faiblesses']||q['Opportunités']||q['Menaces']){
+      sectionTitle('7','Diagnostic interne - SWOT');
+      [['Forces',q['Forces']],['Faiblesses',q['Faiblesses']],['Opportunites',q['Opportunités']],['Menaces',q['Menaces']]].forEach(([l,v])=>{bodyText(l,v||'-')});
+      y+=6;
+    }
+
+    sectionTitle('8','Risques et Recommandations');
+    [['Risques identifies',q['Risques identifiés']],['Risques',getKPISynthese('Risques')],['Points faibles',getKPISynthese('Points faibles')]].forEach(([l,val])=>{bodyText(l,val)});
+    [['Priorites 12 mois',q['Priorités 12 mois']],['Actions 90 jours',getKPISynthese('Actions 90 jours')],['Besoins specifiques',q['Besoins spécifiques']]].forEach(([l,val])=>{bodyText(l,val)});
+    y+=6;
+
+    sectionTitle('9','Fiche entreprise');
+    ['Raison sociale','Forme juridique','Secteur','Adresse principale','Ville / Code postal','Date de création','Effectif actuel','Nombre de sites','Zone géographique couverte'].forEach(fld=>{bodyText(fld,cl[fld])});
+
+    // Footers (skip cover)
+    const totalPages=doc.getNumberOfPages();
+    for(let p=2;p<=totalPages;p++){doc.setPage(p);drawFooter(p-1,totalPages-1)}
+
+    const fn='Rapport_'+san(DATA.clientName).replace(/[^a-zA-Z0-9 _-]/g,'').replace(/\s+/g,'_')+'_'+new Date().toISOString().slice(0,10)+'.pdf';
+
+    // Cross-browser: Blob+anchor fallback for Safari
+    try{
+      const blob=doc.output('blob');const url=URL.createObjectURL(blob);
+      const a=document.createElement('a');a.href=url;a.download=fn;a.style.display='none';
+      document.body.appendChild(a);a.click();
+      setTimeout(()=>{URL.revokeObjectURL(url);a.remove()},500);
+    }catch(_){doc.save(fn)}
+
+  }catch(e){
+    console.error('PDF export error:',e);
+    alert('Erreur lors de la generation du PDF : '+(e.message||e));
+  }finally{
+    _pdfExporting=false;btn.disabled=false;btn.innerHTML=DL_SVG+'Telecharger le rapport PDF';
+  }
+}
+</script>
+</body>
+</html>

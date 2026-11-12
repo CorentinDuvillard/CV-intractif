@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>Corentin Duvillard, CV</title>
+<meta name="description" content="CV interactif de Corentin Duvillard : expériences, formation, compétences, recommandations et portfolio.">
+<meta property="og:title" content="Corentin Duvillard, CV">
+<meta property="og:image" content="fichiers/photo.jpg">
+<link rel="icon" href="fichiers/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="fichiers/favicon-48.png" type="image/png" sizes="48x48">
+<link rel="apple-touch-icon" href="fichiers/favicon-180.png">
+<link rel="preload" href="fichiers/polices/dm-sans-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fichiers/polices/cormorant-garamond-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="contenu.json" as="fetch" crossorigin="anonymous">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="skip-link" href="#contenu">Aller au contenu</a>
+<div id="progressBar" aria-hidden="true"></div>
+
+<nav id="navbar" aria-label="Navigation principale"><div class="nav-inner">
+<div class="page-nav" id="pageNav">
+<a href="#page-cv" class="page-nav-btn active" data-page="cv" aria-current="page">CV</a>
+<a href="#page-recommandations" class="page-nav-btn" data-page="recommandations">Recommandations</a>
+<a href="#page-biographie" class="page-nav-btn" data-page="biographie">Biographie</a>
+<a href="#page-portfolio" class="page-nav-btn" data-page="portfolio">Portfolio</a>
+</div>
+<div class="nav-actions">
+<a class="btn-dl" id="dlBtn" href="fichiers/cv.pdf" download aria-label="Télécharger le CV en PDF"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg><span class="dl-label">CV PDF</span></a>
+<button class="nav-hamburger" id="hamburger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="mobileMenu"><span></span><span></span><span></span></button>
+</div>
+</div></nav>
+
+<div class="mobile-menu" id="mobileMenu" role="dialog" aria-modal="true" aria-label="Menu" hidden><button class="mobile-close" id="mobileClose" aria-label="Fermer le menu">&#10005;</button>
+<ul class="mobile-menu-links">
+<li><a href="#page-cv" data-page="cv">CV</a></li>
+<li><a href="#page-recommandations" data-page="recommandations">Recommandations</a></li>
+<li><a href="#page-biographie" data-page="biographie">Biographie</a></li>
+<li><a href="#page-portfolio" data-page="portfolio">Portfolio</a></li>
+<li aria-hidden="true"><div class="mobile-menu-sep"></div></li>
+<li><a href="#profil">Profil</a></li>
+<li><a href="#experience">Expérience</a></li>
+<li><a href="#formation">Formation</a></li>
+<li><a href="#competences">Compétences</a></li>
+<li><a href="#distinction">Distinctions</a></li>
+<li><a href="#interets">Intérêts</a></li>
+</ul></div>
+
+<noscript><p>Ce CV a besoin de JavaScript pour s'afficher. Le CV au format PDF reste disponible : <a href="fichiers/cv.pdf">télécharger le CV</a>.</p></noscript>
+
+<main id="contenu" tabindex="-1">
+
+<aside class="cv-sidebar visible" id="cvSidebar" aria-label="Sections du CV">
+<a href="#profil" class="cv-sidebar-link" data-section="profil">Profil</a>
+<a href="#experience" class="cv-sidebar-link" data-section="experience">Expérience</a>
+<a href="#formation" class="cv-sidebar-link" data-section="formation">Formation</a>
+<a href="#competences" class="cv-sidebar-link" data-section="competences">Compétences</a>
+<a href="#distinction" class="cv-sidebar-link" data-section="distinction">Distinctions</a>
+<a href="#interets" class="cv-sidebar-link" data-section="interets">Intérêts</a>
+</aside>
+
+<div id="page-cv" class="page-section active">
+<section class="hero" id="hero" aria-label="Présentation"><div class="hero-content" id="heroContent"></div></section>
+<section class="profil-section" id="profil">
+<div class="section-header reveal"><h2 class="section-title" tabindex="-1">Profil</h2></div>
+<div class="profil-card reveal" id="profilCard"></div>
+</section>
+
+<section id="experience">
+<div class="section-header reveal"><h2 class="section-title" tabindex="-1">Expériences professionnelles</h2></div>
+<div class="timeline" id="timeline"></div>
+<div class="section-header reveal" style="margin-top:2rem"><h2 class="section-title" tabindex="-1" style="font-size:clamp(1.3rem,3vw,1.8rem)">Jobs étudiants</h2></div>
+<div class="student-jobs" id="studentJobs"></div>
+</section>
+
+<section id="formation">
+<div class="section-header reveal"><h2 class="section-title" tabindex="-1">Formation</h2></div>
+<div class="formation-list" id="formationList"></div>
+</section>
+
+<section id="competences">
+<div class="section-header reveal"><h2 class="section-title" tabindex="-1">Compétences</h2></div>
+<div class="skills-section">
+<div class="skills-bars-row" id="skillsBars"></div>
+<div class="skills-tags-row" id="skillsTags"></div>
+</div>
+</section>
+
+<section id="distinction">
+<div class="section-header reveal"><h2 class="section-title" tabindex="-1">Distinctions &amp; Certifications</h2></div>
+<div class="distinctions-grid" id="distinctions"></div>
+</section>
+
+<section id="interets">
+<div class="section-header reveal"><h2 class="section-title" tabindex="-1">Centres d'intérêt</h2></div>
+<div class="interests-grid" id="interets-grid"></div>
+</section>
+</div>
+
+<div id="page-recommandations" class="page-section">
+<section class="section-compact">
+<div class="section-header"><h2 class="section-title" tabindex="-1">Recommandations</h2></div>
+<div class="doc-cards" id="recommandations"></div>
+</section>
+</div>
+
+<div id="page-biographie" class="page-section">
+<section class="section-compact">
+<div class="section-header"><h2 class="section-title" tabindex="-1">Biographie</h2></div>
+<div class="bio-skeleton" id="biographie"></div>
+</section>
+</div>
+
+<div id="page-portfolio" class="page-section">
+<section class="section-compact">
+<div class="section-header"><h2 class="section-title" tabindex="-1">Portfolio</h2>
+<p class="portfolio-disclaimer" id="portfolioDisclaimer"></p></div>
+<div class="pf">
+<h3 class="pf-sous-titre pf-sous-titre--haut">Highlight</h3>
+<div class="pf-phares" id="pfPhares"></div>
+<div class="pf-detail-slot" id="pfDetailPhares"></div>
+<h3 class="pf-sous-titre">Outils et dashboards</h3>
+<div class="pf-grille" id="pfAutres"></div>
+<div class="pf-detail-slot" id="pfDetailAutres"></div>
+</div>
+<div class="portfolio-modal" id="portfolioModal">
+<div class="portfolio-modal-inner">
+<button class="portfolio-modal-close" id="portfolioModalClose" aria-label="Fermer">&#10005;</button>
+<iframe id="portfolioModalIframe" sandbox="allow-scripts allow-same-origin allow-downloads"></iframe>
+</div>
+</div>
+</section>
+</div>
+
+</main>
+
+<footer><div class="footer-inner" id="footer"></div></footer>
+
+<dialog class="photo-dialog" id="photoGrande" aria-label="Photo en grand"><button type="button" class="photo-dialog-fermer" id="photoFermer" aria-label="Fermer la photo">&#10005;</button><img id="photoGrandeImg" alt=""></dialog>
+
+<script src="script.js"></script>
+</body>
+</html>
