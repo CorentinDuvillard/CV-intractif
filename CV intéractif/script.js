@@ -268,7 +268,7 @@ function rendrePortfolio(p) {
   /* WizeFile s'affiche comme sur un écran d'ordinateur de 1280 px, réduit pour tenir dans la carte */
   var cadreWf = el('wfVue');
   if (cadreWf && cadreWf.tagName === 'IFRAME') {
-    var LARGEUR = 1100, zone = cadreWf.parentElement;
+    var LARGEUR = 900, zone = cadreWf.parentElement;
     zone.classList.add('pp-ecran--echelle');
     var ajuster = function () {
       var w = zone.clientWidth, h = zone.clientHeight;
