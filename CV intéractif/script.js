@@ -452,14 +452,14 @@ function brancherComportements() {
   });
 
   /* Photo en grand */
-  var dlg = el('photoGrande');
+  var dlg = el('photoGrande'); var dip = el('diplomeGrand');
   document.addEventListener('click', function (e) {
     if (e.target.closest('#photoBouton')) {
       var g = el('photoGrandeImg');
       if (g.dataset.src) { g.src = g.dataset.src; g.removeAttribute('data-src'); }
       dlg.showModal(); return;
     }
-    if (e.target === dlg || e.target.closest('#photoFermer')) dlg.close();
+    if (e.target === dlg || e.target.closest('#photoFermer')) dlg.close(); var v = e.target.closest('.distinction-voir'); if (v) { e.preventDefault(); var gi = el('diplomeGrandImg'); if (!gi.getAttribute('src')) gi.src = v.getAttribute('href'); dip.showModal(); return; } if (e.target === dip || e.target.closest('#diplomeFermer')) dip.close();
   });
 
   /* Fermeture du plein écran */
