@@ -617,7 +617,7 @@ html:not(.anim) :is(.hero-badge,.hero-name,.hero-tagline,.hero-contact,.hero-div
 .photo-dialog[open]{animation:pfOuvre .3s var(--transition)}
 .photo-dialog img{display:block;width:100%;height:auto;max-height:88vh;object-fit:contain;border-radius:var(--radius);box-shadow:var(--shadow-lg);border:4px solid var(--white)}
 .photo-dialog-fermer{position:absolute;top:-14px;right:-14px;width:40px;height:40px;border-radius:50%;border:none;background:var(--brown-dark);color:var(--cream);font-size:1rem;cursor:pointer;box-shadow:var(--shadow-md)}
-@media(max-width:600px){.photo-dialog-fermer{top:8px;right:8px}}
+@media(max-width:600px){.photo-dialog-fermer{top:8px;right:8px}}.diplome-dialog{max-width:min(94vw,1100px)}
 
 /* Lettres de recommandation dessinées */
 a.doc-card-preview{display:block;text-decoration:none;cursor:zoom-in;height:auto;aspect-ratio:1/1.3;max-height:520px}
