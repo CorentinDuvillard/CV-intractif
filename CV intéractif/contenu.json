@@ -189,7 +189,7 @@
   },
 
   "distinctions": [
-    { "type": "medaille", "titre": "Médaille d'Argent", "texte": "Meilleur Apprenti de France\nArt du Service en Salle, 2020" },
+    { "type": "medaille", "titre": "Médaille d'Argent", "texte": "Meilleur Apprenti de France\nArt du Service en Salle, 2020", "image": "fichiers/diplome-meilleur-apprenti.webp" },
     { "type": "certification", "titre": "Certification AMF", "texte": "Autorité des Marchés Financiers", "statut": "En cours" },
     { "type": "certification", "titre": "Claude Academy", "texte": "Certification Anthropic", "statut": "En cours" }
   ],
