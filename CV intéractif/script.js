@@ -135,7 +135,7 @@ function rendre(c) {
     var medaille = d.type === 'medaille';
     return '<div class="distinction-card ' + (medaille ? 'medal' : 'certif') + '"><div class="distinction-icon">' + icone(medaille ? 'medaille' : 'certificat', ' stroke-width="1.5"') + '</div>'
       + '<h3>' + echap(d.titre) + '</h3><p>' + texte(d.texte) + '</p>'
-      + (d.statut ? '<span class="status-badge"><span class="dot"></span>' + echap(d.statut) + '</span>' : '') + '</div>';
+      + (d.statut ? '<span class="status-badge"><span class="dot"></span>' + echap(d.statut) + '</span>' : '') + (d.image ? '<a class="distinction-voir" href="' + echap(d.image) + '" target="_blank" rel="noopener">' + icone('lien', ' width="14" height="14" aria-hidden="true"') + 'Voir le diplôme</a>' : '') + '</div>';
   });
 
   /* Intérêts */
